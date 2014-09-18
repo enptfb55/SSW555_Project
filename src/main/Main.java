@@ -66,17 +66,17 @@ public class Main
 				// we should use the int value and compare to a enum
 				if(level.equals(Tag.LEVEL_0))
 				{
-					//tagName = line.substring(secondSpaceIndex + 1);
-					tagName = gLine.getTag();
+					tagName = line.substring(secondSpaceIndex + 1);
+					//tagName = gLine.getTag();
 					
-					tagArgument = gLine.getArgs();
+					//tagArgument = gLine.getArgs();
 					
-					/*
+					
 					if(secondSpaceIndex > 0)
 					{
 						tagArgument = line.substring(2, secondSpaceIndex);
 					}	
-					*/
+					
 							
 				}
 				else if(secondSpaceIndex < 0)
