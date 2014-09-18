@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -8,6 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.swing.JFileChooser;
+
+import javafx.stage.FileChooser;
+
 public class Main
 {
 	public static void main(String[] args)
@@ -16,9 +21,17 @@ public class Main
 		TreeMap<String, Individual> individuals = new TreeMap<String, Individual>();
 		TreeMap<String, Family> families = new TreeMap<String, Family>();
 		
+		JFileChooser jc = new JFileChooser();
+		
+		int choice = jc.showOpenDialog(jc);
+		
+		if (choice != JFileChooser.APPROVE_OPTION) return;
+
+		File chosenFile = jc.getSelectedFile();
+		
 		try
 		{
-			br = new BufferedReader(new FileReader("Family-2-30-Aug-2014.ged"));
+			br = new BufferedReader(new FileReader(chosenFile.getPath()));
 			
 			
 
