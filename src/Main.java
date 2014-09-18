@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import javafx.stage.FileChooser;
 
@@ -21,7 +23,9 @@ public class Main
 		TreeMap<String, Individual> individuals = new TreeMap<String, Individual>();
 		TreeMap<String, Family> families = new TreeMap<String, Family>();
 		
-		JFileChooser jc = new JFileChooser();
+		JFileChooser jc = new JFileChooser("data");
+		
+		jc.setFileFilter(new FileNameExtensionFilter("GEDCOM files", "ged"));
 		
 		int choice = jc.showOpenDialog(jc);
 		
