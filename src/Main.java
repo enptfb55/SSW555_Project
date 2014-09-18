@@ -13,6 +13,9 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import main.Family;
+import main.Individual;
+import main.Tag;
 import javafx.stage.FileChooser;
 
 public class Main

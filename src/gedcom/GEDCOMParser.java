@@ -23,7 +23,7 @@ public class GEDCOMParser {
 						"FAMC|FAMS|FAM|MARR|HUSB|WIFE|" +
 					    "CHIL|DIV|DATE|TRLR|NOTE";
 	
-	//final Pattern tagPattern = Pattern.compile( "(" + tags + ")", flags);
+	//static final Pattern tagPattern = Pattern.compile( "([\\w|\\@]+)", flags);
 	static final Pattern linePattern = Pattern.compile ("(\\s?\\d\\s[\\w|\\@]+\\s*)", flags);
 	static final Pattern levelNumPattern = Pattern.compile("^\\s?(\\d)\\s*");
 	static final Pattern tagPattern = Pattern.compile("\\s?\\d\\s([\\w|\\@]+)\\s*");
@@ -55,7 +55,7 @@ public class GEDCOMParser {
 		
 	}
 	
-	private Boolean LineIsValid (String sLine) {
+	public Boolean LineIsValid (String sLine) {
 		Matcher mMatcher = linePattern.matcher(sLine);
 		
 		if (mMatcher.find()) {
@@ -65,31 +65,31 @@ public class GEDCOMParser {
 		return false;
 	}
 	
-	private GEDCOMELine ParseLine (String line) {
+	public GEDCOMELine ParseLine (String line) {
 		
 		GEDCOMELine gLine = new GEDCOMELine();
 		Matcher levelMatcher = levelNumPattern.matcher(line);
-		//Matcher tagMatcher = tagPattern.matcher(line);
-		Matcher tagMatcher = validTagPattern.matcher(line);
+		Matcher tagMatcher = tagPattern.matcher(line);
+		//Matcher tagMatcher = validTagPattern.matcher(line);
 		Matcher argMatcher = argPattern.matcher(line);
 		
 		
 		if (levelMatcher.find ()) {
 			String sLevelNumber = new String (levelMatcher.group(1).trim());
 			int iLevelNumber = Integer.parseInt( sLevelNumber );
-			gLine.setmLevelNumber( iLevelNumber );
+			gLine.setLevelNumber( iLevelNumber );
 		}
 		
 		if (tagMatcher.find()) {
 			String sTag = new String(tagMatcher.group(1).trim());
-			gLine.setmTag(sTag);
+			gLine.setTag(sTag);
 		} else {
-			gLine.setmTag ("Invalid Tag");
+			gLine.setTag ("Invalid Tag");
 		}
 		
 		if (argMatcher.find()) {
 			String sArg = new String(argMatcher.group(1).trim());
-			gLine.setmArgs(sArg);
+			gLine.setArgs(sArg);
 		}
 		
 		return gLine;
