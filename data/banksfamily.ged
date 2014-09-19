@@ -1,0 +1,80 @@
+0 HEAD
+1 SOUR Family Echo
+2 WWW http://www.familyecho.com/
+1 FILE Family 2
+1 DATE 7 SEP 2014
+1 DEST ANSTFILE
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 SUBM @I1@
+2 NAME Agna Desai
+1 SUBN
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME George /Banks/
+2 GIVN George
+2 SURN Banks
+2 _MARNM Banks
+1 SEX M
+1 BIRT
+2 DATE 15 AUG 1954
+1 FAMS @F1@
+0 @I2@ INDI
+1 NAME Nina /Clinton/
+2 GIVN Nina
+2 SURN Clinton
+2 _MARNM Banks
+1 SEX F
+1 BIRT
+2 DATE 19 SEP 1956
+1 FAMS @F1@
+0 @I3@ INDI
+1 NAME Annie /Banks/
+2 GIVN Annie
+2 SURN Banks
+2 _MARNM Banks
+1 SEX F
+1 BIRT
+2 DATE 15 AUG 1976
+1 FAMS @F2@
+1 FAMC @F1@
+0 @I4@ INDI
+1 NAME Matty /Banks/
+2 GIVN Matty
+2 SURN Banks
+2 _MARNM Banks
+1 SEX M
+1 BIRT
+2 DATE 16 SEP 1980
+1 FAMC @F1@
+0 @I5@ INDI
+1 NAME Bryan /MacKenzie/
+2 GIVN Bryan
+2 SURN MacKenzie
+2 _MARNM MacKenzie
+1 SEX M
+1 BIRT
+2 DATE 10 JAN 1976
+1 FAMS @F2@
+0 @I6@ INDI
+1 NAME Mark /MacKenzie/
+2 GIVN Mark
+2 SURN MacKenzie
+2 _MARNM MacKenzie
+1 SEX M
+1 BIRT
+2 DATE 11 OCT 2001
+1 FAMC @F2@
+0 @F1@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+1 CHIL @I3@
+1 CHIL @I4@
+1 _CURRENT Y
+0 @F2@ FAM
+1 HUSB @I5@
+1 WIFE @I3@
+1 CHIL @I6@
+1 _CURRENT Y
+0 TRLR
