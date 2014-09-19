@@ -14,10 +14,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import javafx.stage.FileChooser;
 
 public class Main
 {
