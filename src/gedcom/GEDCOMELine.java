@@ -22,27 +22,31 @@ public class GEDCOMELine {
 
 
 
-	public int getmLevelNumber() {
+	public int getLevelNumber() {
 		return mLevelNumber;
 	}
+	
+	public String getLevelNumberAsString () {
+		return Integer.toString(mLevelNumber);
+	}
 
-	public void setmLevelNumber(int mLevelNumber) {
+	public void setLevelNumber(int mLevelNumber) {
 		this.mLevelNumber = mLevelNumber;
 	}
 
-	public String getmTag() {
+	public String getTag() {
 		return mTag;
 	}
 
-	public void setmTag(String mTag) {
+	public void setTag(String mTag) {
 		this.mTag = mTag;
 	}
 
-	public String getmArgs() {
+	public String getArgs() {
 		return mArgs;
 	}
 
-	public void setmArgs(String mArgs) {
+	public void setArgs(String mArgs) {
 		this.mArgs = mArgs;
 	}
 }
