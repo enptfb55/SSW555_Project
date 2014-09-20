@@ -1,6 +1,6 @@
 package main;
-import gedcom.GEDCOMELine;
 import gedcom.GEDCOMParser;
+import gedcom.GEDCOMTag;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,31 +42,20 @@ public class Main
 			//should really do this parsing logic somewhere else
 			String line, level, lastTopLevelTagName, tagName, id, lastId = "", tagArgument = "", lastTagName = "";
 			int secondSpaceIndex;
-			Tag tag;
+			GEDCOMTag tag;
 			
 			GEDCOMParser gParser = new GEDCOMParser();
 			
 			while ((line = br.readLine()) != null)
 			{
-				GEDCOMELine gLine = null;
 				
-				if (gParser.LineIsValid(line)) {
-					gLine = gParser.ParseLine(line);
-				} else {
-					continue;
-				}
-				
-				
-				level = gLine.getLevelNumberAsString();
+				level = line.substring(0, 1);
 				secondSpaceIndex = line.indexOf(" ", 2);
 				
 				// we should use the int value and compare to a enum
-				if(level.equals(Tag.LEVEL_0))
+				if(level.equals(GEDCOMTag.LEVEL_0))
 				{
 					tagName = line.substring(secondSpaceIndex + 1);
-					//tagName = gLine.getTag();
-					
-					//tagArgument = gLine.getArgs();
 					
 					
 					if(secondSpaceIndex > 0)
@@ -88,11 +77,11 @@ public class Main
 						
 				try
 				{
-					tag = new Tag(level, tagName, tagArgument);
+					tag = new GEDCOMTag(level, tagName, tagArgument);
 					
 					switch (tag.getLevel())
 					{
-						case Tag.LEVEL_0:
+						case GEDCOMTag.LEVEL_0:
 							lastTopLevelTagName = tag.getName();
 							
 							id = tag.getArgument().replace("@", ""); //should probably move this to setId methods
@@ -100,11 +89,11 @@ public class Main
 
 							switch(lastTopLevelTagName)
 							{
-								case Tag.NAME_INDI:
+								case GEDCOMTag.NAME_INDI:
 									individuals.put(id, new Individual(id));
 									break;
 								
-								case Tag.NAME_FAM:
+								case GEDCOMTag.NAME_FAM:
 									families.put(id, new Family(id));
 									break;
 							}
@@ -112,24 +101,24 @@ public class Main
 							break;
 						
 						
-						case Tag.LEVEL_1:
+						case GEDCOMTag.LEVEL_1:
 							lastTagName = tag.getName();
 							
 							switch(tag.getName())
 							{
-								case Tag.NAME_NAME:
+								case GEDCOMTag.NAME_NAME:
 									Individual iName = individuals.get(lastId);
 									iName.setName(tag.getArgument());
 									individuals.put(lastId, iName);
 									break;
 									
-								case Tag.NAME_SEX:
+								case GEDCOMTag.NAME_SEX:
 									Individual iSex = individuals.get(lastId);
 									iSex.setSex(tag.getArgument().charAt(0));
 									individuals.put(lastId, iSex);
 									break;
 									
-								case Tag.NAME_FAMC:
+								case GEDCOMTag.NAME_FAMC:
 									Individual iFamc = individuals.get(lastId);
 									List<String> childOfFamilyIds = iFamc.getChildOfFamilyIDs();
 									childOfFamilyIds.add(tag.getArgument().replace("@", ""));
@@ -137,7 +126,7 @@ public class Main
 									individuals.put(lastId, iFamc);
 									break;
 								
-								case Tag.NAME_FAMS:
+								case GEDCOMTag.NAME_FAMS:
 									Individual iFams = individuals.get(lastId);
 									List<String> spouseOfFamilyIds = iFams.getSpouseOfFamilyIDs();
 									spouseOfFamilyIds.add(tag.getArgument().replace("@", ""));
@@ -145,19 +134,19 @@ public class Main
 									individuals.put(lastId, iFams);
 									break;
 								
-								case Tag.NAME_HUSB:
+								case GEDCOMTag.NAME_HUSB:
 									Family fHusband = families.get(lastId);
 									fHusband.setHusbandId(tag.getArgument());
 									families.put(lastId, fHusband);
 									break;
 								
-								case Tag.NAME_WIFE:
+								case GEDCOMTag.NAME_WIFE:
 									Family fWife = families.get(lastId);
 									fWife.setWifeId(tag.getArgument());
 									families.put(lastId, fWife);
 									break;
 									
-								case Tag.NAME_CHIL:
+								case GEDCOMTag.NAME_CHIL:
 									Family fChild = families.get(lastId);
 									fChild.setChildId(tag.getArgument());
 									families.put(lastId, fChild);
@@ -166,31 +155,31 @@ public class Main
 							
 							break;
 							
-						case Tag.LEVEL_2: //currently only DATE exists as valid tag name
+						case GEDCOMTag.LEVEL_2: //currently only DATE exists as valid tag name
 							
 							try
 							{
 								switch(lastTagName)
 								{
-									case Tag.NAME_BIRT:
+									case GEDCOMTag.NAME_BIRT:
 										Individual iBirt = individuals.get(lastId);
 										iBirt.setBirthday(new SimpleDateFormat("d MMM yyyy").parse(tag.getArgument()));
 										individuals.put(lastId,  iBirt);
 										break;
 									
-									case Tag.NAME_DEAT:
+									case GEDCOMTag.NAME_DEAT:
 										Individual iDeat = individuals.get(lastId);
 										iDeat.setDeath(new SimpleDateFormat("d MMM yyyy").parse(tag.getArgument()));
 										individuals.put(lastId,  iDeat);
 										break;
 									
-									case Tag.NAME_DIV:
+									case GEDCOMTag.NAME_DIV:
 										Family fDiv = families.get(lastId);
 										fDiv.setDivorced(new SimpleDateFormat("d MMM yyyy").parse(tag.getArgument()));
 										families.put(lastId,  fDiv);
 										break;
 									
-									case Tag.NAME_MARR:
+									case GEDCOMTag.NAME_MARR:
 										Family fMarr = families.get(lastId);
 										fMarr.setMarried(new SimpleDateFormat("d MMM yyyy").parse(tag.getArgument()));
 										families.put(lastId,  fMarr);

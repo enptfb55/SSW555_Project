@@ -43,16 +43,21 @@ public class GEDCOMParser {
 	public void ParseFile (String sFilePath) throws IOException {
 		FileReader frFileReader = new FileReader( sFilePath );
 		BufferedReader brBufferedReader = new BufferedReader( frFileReader );
+		
+		ParseBuffer (brBufferedReader);
+		
+	}
+	
+	public void ParseBuffer (BufferedReader brBuffer) throws IOException {
 		String sLine;
 		
-		while ((sLine = brBufferedReader.readLine()) != null) {
+		while ((sLine = brBuffer.readLine()) != null) {
 			
 			if (LineIsValid (sLine)) {
 				mGLines.add(ParseLine(sLine));
 			}
 			
 		}
-		
 	}
 	
 	public Boolean LineIsValid (String sLine) {

@@ -1,9 +1,9 @@
-package main;
+package gedcom;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class Tag
+public class GEDCOMTag
 {
 	public static final String LEVEL_0 = "0";
 	public static final String LEVEL_1 = "1";
@@ -31,13 +31,13 @@ public class Tag
 	{
 		VALID_TAGS = new HashMap<String, List<String>>();
 		
-		VALID_TAGS.put(LEVEL_0, Arrays.asList(Tag.NAME_INDI
-											, Tag.NAME_FAM));
+		VALID_TAGS.put(LEVEL_0, Arrays.asList(GEDCOMTag.NAME_INDI
+											, GEDCOMTag.NAME_FAM));
 		
-		VALID_TAGS.put(LEVEL_1, Arrays.asList(Tag.NAME_NAME, Tag.NAME_SEX, Tag.NAME_BIRT, Tag.NAME_DEAT, Tag.NAME_FAMC, Tag.NAME_FAMS, Tag.NAME_MARR 
-											, Tag.NAME_HUSB, Tag.NAME_WIFE, Tag.NAME_CHIL, Tag.NAME_DIV, Tag.NAME_TRLR, Tag.NAME_NOTE));
+		VALID_TAGS.put(LEVEL_1, Arrays.asList(GEDCOMTag.NAME_NAME, GEDCOMTag.NAME_SEX, GEDCOMTag.NAME_BIRT, GEDCOMTag.NAME_DEAT, GEDCOMTag.NAME_FAMC, GEDCOMTag.NAME_FAMS, GEDCOMTag.NAME_MARR 
+											, GEDCOMTag.NAME_HUSB, GEDCOMTag.NAME_WIFE, GEDCOMTag.NAME_CHIL, GEDCOMTag.NAME_DIV, GEDCOMTag.NAME_TRLR, GEDCOMTag.NAME_NOTE));
 		
-		VALID_TAGS.put(LEVEL_2, Arrays.asList(Tag.NAME_DATE));
+		VALID_TAGS.put(LEVEL_2, Arrays.asList(GEDCOMTag.NAME_DATE));
 	}
 	
 	private String Level;
@@ -46,15 +46,15 @@ public class Tag
 	
 	public static boolean isLevelValid(String level)
 	{
-		return Tag.VALID_TAGS.containsKey(level);
+		return GEDCOMTag.VALID_TAGS.containsKey(level);
 	}
 	
 	public static boolean isNameValid(String level, String tag)
 	{
-		return isLevelValid(level) ? Tag.VALID_TAGS.get(level).contains(tag) : false;
+		return isLevelValid(level) ? GEDCOMTag.VALID_TAGS.get(level).contains(tag) : false;
 	}
 	
-	public Tag(String level, String name, String argument) throws IllegalArgumentException
+	public GEDCOMTag(String level, String name, String argument) throws IllegalArgumentException
 	{
 		this.setLevel(level);
 		this.setName(name);
@@ -68,7 +68,7 @@ public class Tag
 	
 	public void setLevel(String level)
 	{
-		if(!Tag.isLevelValid(level))
+		if(!GEDCOMTag.isLevelValid(level))
 		{
 			//perhaps create IllegalTagLevelException?
 			throw new IllegalArgumentException("Specified tag level is invalid");
@@ -84,7 +84,7 @@ public class Tag
 	
 	public void setName(String name)
 	{
-		if(!Tag.isNameValid(this.Level, name))
+		if(!GEDCOMTag.isNameValid(this.Level, name))
 		{
 			//perhaps create IllegalTagNameException?
 			throw new IllegalArgumentException("Specified tag name is invalid for the given tag level");
