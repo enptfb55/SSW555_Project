@@ -16,27 +16,66 @@ import java.util.TreeMap;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+
 public class Main
 {
+	static Options mOptions = new Options();
+	static File mInputFile = null;
+	
 	public static void main(String[] args)
 	{
 		BufferedReader br;
 		TreeMap<String, Individual> individuals = new TreeMap<String, Individual>();
 		TreeMap<String, Family> families = new TreeMap<String, Family>();
 		
-		JFileChooser jc = new JFileChooser("data");
 		
-		jc.setFileFilter(new FileNameExtensionFilter("GEDCOM files", "ged"));
-		
-		int choice = jc.showOpenDialog(jc);
-		
-		if (choice != JFileChooser.APPROVE_OPTION) return;
 
-		File chosenFile = jc.getSelectedFile();
+		mOptions.addOption("help", false, "prints this help message");
+		mOptions.addOption("file", true, "display current time");
+		
+		CommandLineParser parser = new BasicParser();
+		
+		try {
+			CommandLine cmd = parser.parse( mOptions, args);
+			
+			if (cmd.hasOption("help")) {
+				usage();
+			}
+			
+			if (cmd.hasOption("file")) {
+				File tmpFile = new File(cmd.getOptionValue("file"));
+				if (tmpFile.exists()) {
+					mInputFile = tmpFile;
+				}
+				
+			}
+			
+			
+		} catch (org.apache.commons.cli.ParseException e1) {
+			System.err.println( "Parsing failed.  Reason: " + e1.getMessage() );
+		}
+		
+		
+		if (mInputFile == null) {
+			JFileChooser jc = new JFileChooser("data");
+		
+			jc.setFileFilter(new FileNameExtensionFilter("GEDCOM files", "ged"));
+		
+			int choice = jc.showOpenDialog(jc);
+		
+			if (choice != JFileChooser.APPROVE_OPTION) return;
+
+			mInputFile = jc.getSelectedFile();
+		}
 		
 		try
 		{
-			br = new BufferedReader(new FileReader(chosenFile.getPath()));
+			br = new BufferedReader(new FileReader(mInputFile.getPath()));
 
 
 			//should really do this parsing logic somewhere else
@@ -237,4 +276,11 @@ public class Main
 			e.printStackTrace();
 		}
 	}
+	
+	private static void usage () {
+		HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp( "GEDCOMParser", mOptions );
+		System.exit(0);
+	}
+	
 }
