@@ -1,227 +1,75 @@
 package main;
-import gedcom.GEDCOMELine;
 import gedcom.GEDCOMParser;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import javafx.stage.FileChooser;
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
 
 public class Main
 {
+	static Options mOptions = new Options();
+	static File mInputFile = null;
+	
 	public static void main(String[] args)
-	{
-		BufferedReader br;
-		TreeMap<String, Individual> individuals = new TreeMap<String, Individual>();
-		TreeMap<String, Family> families = new TreeMap<String, Family>();
+	{	
 		
-		JFileChooser jc = new JFileChooser("data");
+		mOptions.addOption("help", false, "prints this help message");
+		mOptions.addOption("file", true, "display current time");
 		
-		jc.setFileFilter(new FileNameExtensionFilter("GEDCOM files", "ged"));
+		CommandLineParser parser = new BasicParser();
 		
-		int choice = jc.showOpenDialog(jc);
+		try {
+			CommandLine cmd = parser.parse( mOptions, args);
+			
+			if (cmd.hasOption("help")) {
+				usage();
+			}
+			
+			if (cmd.hasOption("file")) {
+				File tmpFile = new File(cmd.getOptionValue("file"));
+				if (tmpFile.exists()) {
+					mInputFile = tmpFile;
+				}
+				
+			}
+			
+			
+		} catch (org.apache.commons.cli.ParseException e1) {
+			System.err.println( "Parsing failed.  Reason: " + e1.getMessage() );
+		}
 		
-		if (choice != JFileChooser.APPROVE_OPTION) return;
+		
+		if (mInputFile == null) {
+			JFileChooser jc = new JFileChooser("data");
+		
+			jc.setFileFilter(new FileNameExtensionFilter("GEDCOM files", "ged"));
+		
+			int choice = jc.showOpenDialog(jc);
+		
+			if (choice != JFileChooser.APPROVE_OPTION) return;
 
-		File chosenFile = jc.getSelectedFile();
+			mInputFile = jc.getSelectedFile();
+		}
 		
 		try
 		{
-			br = new BufferedReader(new FileReader(chosenFile.getPath()));
-
-
-			//should really do this parsing logic somewhere else
-			String line, level, lastTopLevelTagName, tagName, id, lastId = "", tagArgument = "", lastTagName = "";
-			int secondSpaceIndex;
-			Tag tag;
+			GEDCOMParser gParser = new GEDCOMParser (mInputFile);
 			
-			GEDCOMParser gParser = new GEDCOMParser();
 			
-			while ((line = br.readLine()) != null)
-			{
-				GEDCOMELine gLine = null;
-				
-				if (gParser.LineIsValid(line)) {
-					gLine = gParser.ParseLine(line);
-				} else {
-					continue;
-				}
-				
-				
-				level = gLine.getLevelNumberAsString();
-				secondSpaceIndex = line.indexOf(" ", 2);
-				
-				// we should use the int value and compare to a enum
-				if(level.equals(Tag.LEVEL_0))
-				{
-					tagName = line.substring(secondSpaceIndex + 1);
-					//tagName = gLine.getTag();
-					
-					//tagArgument = gLine.getArgs();
-					
-					
-					if(secondSpaceIndex > 0)
-					{
-						tagArgument = line.substring(2, secondSpaceIndex);
-					}	
-					
-							
-				}
-				else if(secondSpaceIndex < 0)
-				{
-					tagName = line.substring(2);
-				}
-				else
-				{
-					tagName = line.substring(2, secondSpaceIndex);
-					tagArgument = line.substring(secondSpaceIndex + 1);
-				}
-						
-				try
-				{
-					tag = new Tag(level, tagName, tagArgument);
-					
-					switch (tag.getLevel())
-					{
-						case Tag.LEVEL_0:
-							lastTopLevelTagName = tag.getName();
-							
-							id = tag.getArgument().replace("@", ""); //should probably move this to setId methods
-							lastId = id;
-
-							switch(lastTopLevelTagName)
-							{
-								case Tag.NAME_INDI:
-									individuals.put(id, new Individual(id));
-									break;
-								
-								case Tag.NAME_FAM:
-									families.put(id, new Family(id));
-									break;
-							}
-							
-							break;
-						
-						
-						case Tag.LEVEL_1:
-							lastTagName = tag.getName();
-							
-							switch(tag.getName())
-							{
-								case Tag.NAME_NAME:
-									Individual iName = individuals.get(lastId);
-									iName.setName(tag.getArgument());
-									individuals.put(lastId, iName);
-									break;
-									
-								case Tag.NAME_SEX:
-									Individual iSex = individuals.get(lastId);
-									iSex.setSex(tag.getArgument().charAt(0));
-									individuals.put(lastId, iSex);
-									break;
-									
-								case Tag.NAME_FAMC:
-									Individual iFamc = individuals.get(lastId);
-									List<String> childOfFamilyIds = iFamc.getChildOfFamilyIDs();
-									childOfFamilyIds.add(tag.getArgument().replace("@", ""));
-									iFamc.setChildOfFamilyIDs(childOfFamilyIds);
-									individuals.put(lastId, iFamc);
-									break;
-								
-								case Tag.NAME_FAMS:
-									Individual iFams = individuals.get(lastId);
-									List<String> spouseOfFamilyIds = iFams.getSpouseOfFamilyIDs();
-									spouseOfFamilyIds.add(tag.getArgument().replace("@", ""));
-									iFams.setSpouseOfFamilyIDs(spouseOfFamilyIds);
-									individuals.put(lastId, iFams);
-									break;
-								
-								case Tag.NAME_HUSB:
-									Family fHusband = families.get(lastId);
-									fHusband.setHusbandId(tag.getArgument());
-									families.put(lastId, fHusband);
-									break;
-								
-								case Tag.NAME_WIFE:
-									Family fWife = families.get(lastId);
-									fWife.setWifeId(tag.getArgument());
-									families.put(lastId, fWife);
-									break;
-									
-								case Tag.NAME_CHIL:
-									Family fChild = families.get(lastId);
-									fChild.setChildId(tag.getArgument());
-									families.put(lastId, fChild);
-									break;
-							}
-							
-							break;
-							
-						case Tag.LEVEL_2: //currently only DATE exists as valid tag name
-							
-							try
-							{
-								switch(lastTagName)
-								{
-									case Tag.NAME_BIRT:
-										Individual iBirt = individuals.get(lastId);
-										iBirt.setBirthday(new SimpleDateFormat("d MMM yyyy").parse(tag.getArgument()));
-										individuals.put(lastId,  iBirt);
-										break;
-									
-									case Tag.NAME_DEAT:
-										Individual iDeat = individuals.get(lastId);
-										iDeat.setDeath(new SimpleDateFormat("d MMM yyyy").parse(tag.getArgument()));
-										individuals.put(lastId,  iDeat);
-										break;
-									
-									case Tag.NAME_DIV:
-										Family fDiv = families.get(lastId);
-										fDiv.setDivorced(new SimpleDateFormat("d MMM yyyy").parse(tag.getArgument()));
-										families.put(lastId,  fDiv);
-										break;
-									
-									case Tag.NAME_MARR:
-										Family fMarr = families.get(lastId);
-										fMarr.setMarried(new SimpleDateFormat("d MMM yyyy").parse(tag.getArgument()));
-										families.put(lastId,  fMarr);
-										break;
-								}
-							}
-							catch (ParseException e)
-							{
-								
-							}
-							
-							break;
-					}
-				}
-				catch (IllegalArgumentException e)
-				{
-					//tag is invalid
-					//System.out.println(e.getMessage());
-				}
-				
-				tagArgument = "";
-			}
-			
-			br.close();
 			
 			System.out.println("Individuals - ");
 			
-			for(Map.Entry<String, Individual> entry : individuals.entrySet())
+			for (Map.Entry<String, Individual> entry : gParser.getIndividuals().entrySet())
 			{
 				System.out.println("Id:" + entry.getValue().getId() + "\tName: " + entry.getValue().getName());
 				//System.out.println(entry.getValue().toString());
@@ -230,13 +78,13 @@ public class Main
 			System.out.println("");
 			System.out.println("Families - ");
 			
-			for(Map.Entry<String, Family> entry : families.entrySet())
+			for(Map.Entry<String, Family> entry : gParser.getFamilies().entrySet())
 			{
 				Family family = entry.getValue();
 
 				System.out.println("Id:\t\t" + family.getId());
-				System.out.println("Husband Name:\t" + individuals.get(family.getHusbandId()).getName());
-				System.out.println("Wife Name:\t" + individuals.get(family.getWifeId()).getName());
+				System.out.println("Husband Name:\t" + gParser.getIndividuals().get(family.getHusbandId()).getName());
+				System.out.println("Wife Name:\t" + gParser.getIndividuals().get(family.getWifeId()).getName());
 				//System.out.println("\tChild Name:\t" + individuals.get(family.getChildId()).getName());
 				System.out.println("");
 				
@@ -251,4 +99,11 @@ public class Main
 			e.printStackTrace();
 		}
 	}
+	
+	private static void usage () {
+		HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp( "GEDCOMParser", mOptions );
+		System.exit(0);
+	}
+	
 }
