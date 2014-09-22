@@ -4,6 +4,7 @@ import gedcom.GEDCOMParser;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Map;
 
 import javax.swing.JFileChooser;
@@ -19,12 +20,14 @@ public class Main
 {
 	static Options mOptions = new Options();
 	static File mInputFile = null;
+	static File mOutputFile = null;
 	
 	public static void main(String[] args)
 	{	
 		
 		mOptions.addOption("help", false, "prints this help message");
-		mOptions.addOption("file", true, "display current time");
+		mOptions.addOption("file", true, "input file path");
+		mOptions.addOption("out", true, "output file path");
 		
 		CommandLineParser parser = new BasicParser();
 		
@@ -40,7 +43,10 @@ public class Main
 				if (tmpFile.exists()) {
 					mInputFile = tmpFile;
 				}
-				
+			}
+			
+			if (cmd.hasOption("out")) {
+				mOutputFile = new File (cmd.getOptionValue("out"));
 			}
 			
 			
@@ -61,6 +67,21 @@ public class Main
 			mInputFile = jc.getSelectedFile();
 		}
 		
+		PrintWriter pwOutput = null;
+		
+		if (mOutputFile != null) {
+			try {
+				
+				Boolean flag = mOutputFile.createNewFile();
+				
+				pwOutput = new PrintWriter(mOutputFile);
+			} catch (FileNotFoundException e) {
+				System.err.println( "Unable to create output file.  Reason: " + e.getMessage() );
+			} catch (IOException e) {
+				System.err.println( "Unable to create output file.  Reason: " + e.getMessage() );
+			}
+		}
+		
 		try
 		{
 			GEDCOMParser gParser = new GEDCOMParser (mInputFile);
@@ -68,15 +89,27 @@ public class Main
 			
 			
 			System.out.println("Individuals - ");
+			if (pwOutput != null) {
+				pwOutput.println("Individuals - ");
+			}
 			
 			for (Map.Entry<String, Individual> entry : gParser.getIndividuals().entrySet())
 			{
 				System.out.println("Id:" + entry.getValue().getId() + "\tName: " + entry.getValue().getName());
+				if (pwOutput != null) {
+					pwOutput.println("Id:" + entry.getValue().getId() + "\tName: " + entry.getValue().getName());
+				}
+					
 				//System.out.println(entry.getValue().toString());
 			}
 			
 			System.out.println("");
 			System.out.println("Families - ");
+			
+			if (pwOutput != null) {
+				pwOutput.println("");
+				pwOutput.println("Families - ");
+			}
 			
 			for(Map.Entry<String, Family> entry : gParser.getFamilies().entrySet())
 			{
@@ -88,6 +121,18 @@ public class Main
 				//System.out.println("\tChild Name:\t" + individuals.get(family.getChildId()).getName());
 				System.out.println("");
 				
+				if (pwOutput != null) {
+					pwOutput.println("Id:\t\t" + family.getId());
+					pwOutput.println("Husband Name:\t" + gParser.getIndividuals().get(family.getHusbandId()).getName());
+					pwOutput.println("Wife Name:\t" + gParser.getIndividuals().get(family.getWifeId()).getName());
+					//System.out.println("\tChild Name:\t" + individuals.get(family.getChildId()).getName());
+					pwOutput.println("");
+				}
+				
+			}
+			
+			if (pwOutput != null) {
+				pwOutput.close();
 			}
 		}
 		catch (FileNotFoundException e)

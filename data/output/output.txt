@@ -1,0 +1,34 @@
+Individuals - 
+Id:I1	Name: Dad Three
+Id:I10	Name: FatherOfParterOfDad Three
+Id:I11	Name: MomOfParterOfDad Three
+Id:I2	Name: Mom Three
+Id:I3	Name: Son Three
+Id:I4	Name: ParterOfDad Three
+Id:I5	Name: Daughter Three
+Id:I6	Name: DadOfDad Three
+Id:I7	Name: MomOfDad Three
+Id:I8	Name: FatherOfMom Three
+Id:I9	Name: MomOfMom Three
+
+Families - 
+Id:		F1
+Husband Name:	Dad Three
+Wife Name:	ParterOfDad Three
+
+Id:		F2
+Husband Name:	Dad Three
+Wife Name:	Mom Three
+
+Id:		F3
+Husband Name:	DadOfDad Three
+Wife Name:	MomOfDad Three
+
+Id:		F4
+Husband Name:	FatherOfMom Three
+Wife Name:	MomOfMom Three
+
+Id:		F5
+Husband Name:	FatherOfParterOfDad Three
+Wife Name:	MomOfParterOfDad Three
+
