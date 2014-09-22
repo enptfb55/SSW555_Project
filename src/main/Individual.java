@@ -25,6 +25,11 @@ public class Individual
 		this.setSpouseOfFamilyIDs(new LinkedList<String>());
 	}
 	
+	public static String ParseIdFromString(String s)
+	{
+		return s.replace("@", "");
+	}
+	
 	public String getId()
 	{
 		return Id;

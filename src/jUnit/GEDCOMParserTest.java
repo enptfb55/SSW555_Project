@@ -10,13 +10,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @author samato
- *
- */
 public class GEDCOMParserTest {
 	
 	GEDCOMParser mGParser = null;
+	GEDCOMELine mGLine = null;
 	final static String mGedcomLine = "1 NAME Bob";
 
 	/**
@@ -25,6 +22,7 @@ public class GEDCOMParserTest {
 	@Before
 	public void setUp() throws Exception {
 		mGParser = new GEDCOMParser();
+		mGLine = mGParser.ParseLine(mGedcomLine);
 	}
 
 	/**
@@ -35,14 +33,18 @@ public class GEDCOMParserTest {
 	}
 
 	@Test
-	public void test() {
-		
-		GEDCOMELine gLine = mGParser.ParseLine(mGedcomLine);
-		
-		assertEquals (1, gLine.getLevelNumber());
-		assertEquals("NAME", gLine.getTag());
-		assertEquals("Bob", gLine.getArgs());
-		
+	public void testGetLevelNumber() {
+		assertEquals (1, mGLine.getLevelNumber());
+	}
+	
+	@Test
+	public void testGetArgs() {
+		assertEquals("Bob", mGLine.getArgs());
+	}
+	
+	@Test
+	public void testGetTag() {
+		assertEquals("NAME", mGLine.getTag());
 	}
 
 }

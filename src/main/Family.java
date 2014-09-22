@@ -25,7 +25,7 @@ public class Family
 			throw new IllegalArgumentException("A family must have an id");
 		}
 		
-		Id = id.replace("@", "");
+		Id = Individual.ParseIdFromString(id);
 	}
 
 	public Date getMarried() {
@@ -41,7 +41,7 @@ public class Family
 	}
 
 	public void setHusbandId(String husbandId) {
-		HusbandId = husbandId.replace("@", "");
+		HusbandId = Individual.ParseIdFromString(husbandId);
 	}
 
 	public String getWifeId() {
@@ -49,7 +49,7 @@ public class Family
 	}
 
 	public void setWifeId(String wifeId) {
-		WifeId = wifeId.replace("@", "");
+		WifeId = Individual.ParseIdFromString(wifeId);
 	}
 
 	public String getChildId() {
@@ -57,7 +57,7 @@ public class Family
 	}
 
 	public void setChildId(String childId) {
-		ChildId = childId.replace("@", "");
+		ChildId = Individual.ParseIdFromString(childId);
 	}
 
 	public Date getDivorced() {

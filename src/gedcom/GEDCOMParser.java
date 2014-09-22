@@ -16,8 +16,6 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.sun.javafx.collections.MappingChange.Map;
-
 import main.Family;
 import main.Individual;
 
