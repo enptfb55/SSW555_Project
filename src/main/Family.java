@@ -1,4 +1,5 @@
 package main;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Family
@@ -6,9 +7,9 @@ public class Family
 	private String Id;
 	private Date Married;
 	private Date Divorced;
-	private String HusbandId;
-	private String WifeId;
-	private String ChildId;
+	private Individual Husband;
+	private Individual Wife;
+	private Individual Child;
 
 	public Family(String identifier)
 	{
@@ -39,34 +40,44 @@ public class Family
 		Married = married;
 	}
 
-	public String getHusbandId()
+	public Individual getHusband()
 	{
-		return HusbandId;
+		return Husband;
 	}
 
-	public void setHusbandId(String husbandId)
+	public void setHusband(Individual husband)
 	{
-		HusbandId = Individual.ParseIdFromString(husbandId);
+		Husband = husband;
+		
+		if(husband.getSex() != Individual.SEX_MALE && husband.getSex() != '\u0000')
+		{
+			throw new IllegalArgumentException("Husband with id " + husband.getId() + " may only be of male sex type for family with id " + this.getId());
+		}
 	}
 
-	public String getWifeId()
+	public Individual getWife()
 	{
-		return WifeId;
+		return Wife;
 	}
 
-	public void setWifeId(String wifeId)
+	public void setWife(Individual wife)
 	{
-		WifeId = Individual.ParseIdFromString(wifeId);
+		Wife = wife;
+		
+		if(wife.getSex() != Individual.SEX_FEMALE && wife.getSex() != '\u0000')
+		{
+			throw new IllegalArgumentException("Female with id " + wife.getId() + " may only be of male sex type for family with id " + this.getId());
+		}
 	}
 
-	public String getChildId()
+	public Individual getChild()
 	{
-		return ChildId;
+		return Child;
 	}
 
-	public void setChildId(String childId) 
+	public void setChild(Individual child) 
 	{
-		ChildId = Individual.ParseIdFromString(childId);
+		Child = child;
 	}
 
 	public Date getDivorced() 

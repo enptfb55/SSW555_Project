@@ -127,7 +127,7 @@ public class GEDCOMParser {
 							case GEDCOMTag.NAME_FAMC:
 								Individual iFamc = individuals.get(lastId);
 								List<String> childOfFamilyIds = iFamc.getChildOfFamilyIDs();
-								childOfFamilyIds.add(tag.getArgument().replace("@", ""));
+								childOfFamilyIds.add(Individual.ParseIdFromString(tag.getArgument()));
 								iFamc.setChildOfFamilyIDs(childOfFamilyIds);
 								individuals.put(lastId, iFamc);
 								break;
@@ -135,26 +135,26 @@ public class GEDCOMParser {
 							case GEDCOMTag.NAME_FAMS:
 								Individual iFams = individuals.get(lastId);
 								List<String> spouseOfFamilyIds = iFams.getSpouseOfFamilyIDs();
-								spouseOfFamilyIds.add(tag.getArgument().replace("@", ""));
+								spouseOfFamilyIds.add(Individual.ParseIdFromString(tag.getArgument()));
 								iFams.setSpouseOfFamilyIDs(spouseOfFamilyIds);
 								individuals.put(lastId, iFams);
 								break;
 							
 							case GEDCOMTag.NAME_HUSB:
 								Family fHusband = families.get(lastId);
-								fHusband.setHusbandId(tag.getArgument());
+								fHusband.setHusband(individuals.get(Individual.ParseIdFromString(tag.getArgument())));
 								families.put(lastId, fHusband);
 								break;
 							
 							case GEDCOMTag.NAME_WIFE:
 								Family fWife = families.get(lastId);
-								fWife.setWifeId(tag.getArgument());
+								fWife.setWife(individuals.get(Individual.ParseIdFromString(tag.getArgument())));
 								families.put(lastId, fWife);
 								break;
 								
 							case GEDCOMTag.NAME_CHIL:
 								Family fChild = families.get(lastId);
-								fChild.setChildId(tag.getArgument());
+								fChild.setChild(individuals.get(Individual.ParseIdFromString(tag.getArgument())));
 								families.put(lastId, fChild);
 								break;
 						}

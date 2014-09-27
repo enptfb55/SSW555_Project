@@ -16,6 +16,7 @@ import gedcom.GEDCOMELine;
 import gedcom.GEDCOMParser;
 import gedcom.GEDCOMTag;
 import main.Family;
+import main.Individual;
 
 import org.junit.After;
 import org.junit.Before;
@@ -24,10 +25,15 @@ import org.junit.Test;
 public class FamilyTest {
 	
 	final static String ID_FAMILY = "123";
-	
+
 	final static String ID_CHILD = "234";
+	final static Individual INDIVIDUAL_CHILD = new Individual(ID_CHILD);
+	
 	final static String ID_HUSBAND = "999";
+	final static Individual INDIVIDUAL_HUSBAND = new Individual(ID_HUSBAND);
+	
 	final static String ID_WIFE = "543";
+	final static Individual INDIVIDUAL_WIFE = new Individual(ID_WIFE);
 	
 	final static String DATE_MARRIED_STRING = "July 8, 1902";
 	final static String DATE_DIVORCED_STRING = "December 17, 1934";
@@ -36,9 +42,9 @@ public class FamilyTest {
 	final static Family FAMILY = new Family(ID_FAMILY);
 	static
 	{
-		FAMILY.setHusbandId(ID_HUSBAND);
-		FAMILY.setWifeId(ID_WIFE);
-		FAMILY.setChildId(ID_CHILD);
+		FAMILY.setHusband(INDIVIDUAL_HUSBAND);
+		FAMILY.setWife(INDIVIDUAL_WIFE);
+		FAMILY.setChild(INDIVIDUAL_CHILD);
 		
 		try
 		{
@@ -74,6 +80,31 @@ public class FamilyTest {
 		
 		assertTrue(exceptionThrown);
 	}
+	
+	@Test
+	public void testSetHusbandAsFemaleThrowsException()
+	{
+		boolean exceptionThrown = false;
+		
+		try
+		{
+			Family f = new Family(ID_FAMILY);
+			
+			Individual female = new Individual("123");
+			female.setSex(Individual.SEX_FEMALE);
+			
+			f.setWife(female);
+			f.setHusband(female);
+			
+			fail("Setting the husband of a family to a female did not throw an exception when it should have");
+		}
+		catch (IllegalArgumentException e)
+		{
+			exceptionThrown = true;
+		}
+		
+		assertTrue(exceptionThrown);
+	}
 
 	@Test
 	public void testGetIdEqual()
@@ -84,19 +115,19 @@ public class FamilyTest {
 	@Test
 	public void testGetChildIdEqual()
 	{
-		assertEquals(ID_CHILD, FAMILY.getChildId());
+		assertEquals(ID_CHILD, FAMILY.getChild().getId());
 	}
 	
 	@Test
 	public void testGetWifeIdEqual()
 	{
-		assertEquals(ID_WIFE, FAMILY.getWifeId());
+		assertEquals(ID_WIFE, FAMILY.getWife().getId());
 	}
 	
 	@Test
 	public void testGetHusbandIdEqual()
 	{
-		assertEquals(ID_HUSBAND, FAMILY.getHusbandId());
+		assertEquals(ID_HUSBAND, FAMILY.getHusband().getId());
 	}
 	
 	@Test

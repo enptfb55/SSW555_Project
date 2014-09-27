@@ -105,9 +105,9 @@ public class Main
 
 				//need to add some null checking to ensure existence
 				outputText += "Id:\t\t" + family.getId() + "\n";
-				outputText += "Husband Name:\t" + gParser.getIndividuals().get(family.getHusbandId()).getName() + "\n";
-				outputText += "Wife Name:\t" + gParser.getIndividuals().get(family.getWifeId()).getName() + "\n";
-				outputText += "Child Name:\t" + gParser.getIndividuals().get(family.getChildId()).getName() + "\n\n";
+				outputText += "Husband Name:\t" + family.getHusband().getName() + "\n";
+				outputText += "Wife Name:\t" + family.getWife().getName() + "\n";
+				outputText += "Child Name:\t" + family.getChild().getName() + "\n\n";
 			}
 			
 			LinkedList<GEDCOMError> errors = gParser.getErrors();

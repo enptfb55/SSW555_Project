@@ -6,6 +6,9 @@ import java.util.List;
 
 public class Individual
 {
+	public final static char SEX_MALE = 'M';
+	public final static char SEX_FEMALE = 'F';
+	
 	private String Id;
 	private String Name;
 	private char Sex;
@@ -137,9 +140,9 @@ public class Individual
 		Sex = sex;
 		
 		//should probably make these static finals or perhaps create a sex-like enum/class
-		if(sex != 'M' && sex != 'F')
+		if(sex != SEX_MALE && sex != SEX_FEMALE)
 		{ 
-			throw new IllegalArgumentException("The specified individual sex of " + sex + " is invalid -- M and F only.");
+			throw new IllegalArgumentException("The specified individual sex of " + sex + " is invalid -- " + SEX_MALE + " and " + SEX_FEMALE + " only.");
 		}
 	}
 	

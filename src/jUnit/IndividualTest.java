@@ -28,7 +28,7 @@ public class IndividualTest {
 	
 	final static String INDIVIDUAL_ID = "I3";
 	final static String INDIVIDUAL_NAME = "John Smith";
-	final static char INDIVIDUAL_SEX = 'M';
+	final static char INDIVIDUAL_SEX = Individual.SEX_MALE;
 	final static String INDIVIDUAL_BIRTHDAY_DATE = "July 8, 1902";
 	final static String INDIVIDUAL_DEATH_DATE = "December 17, 1934";
 	
