@@ -19,52 +19,63 @@ public class Family
 		return Id;
 	}
 
-	public void setId(String id) {
+	public void setId(String id)
+	{
+		Id = Individual.ParseIdFromString(id);
+		
 		if(id.isEmpty())
 		{
 			throw new IllegalArgumentException("A family must have an id");
 		}
-		
-		Id = Individual.ParseIdFromString(id);
 	}
 
-	public Date getMarried() {
+	public Date getMarried()
+	{
 		return Married;
 	}
 
-	public void setMarried(Date married) {
+	public void setMarried(Date married)
+	{
 		Married = married;
 	}
 
-	public String getHusbandId() {
+	public String getHusbandId()
+	{
 		return HusbandId;
 	}
 
-	public void setHusbandId(String husbandId) {
+	public void setHusbandId(String husbandId)
+	{
 		HusbandId = Individual.ParseIdFromString(husbandId);
 	}
 
-	public String getWifeId() {
+	public String getWifeId()
+	{
 		return WifeId;
 	}
 
-	public void setWifeId(String wifeId) {
+	public void setWifeId(String wifeId)
+	{
 		WifeId = Individual.ParseIdFromString(wifeId);
 	}
 
-	public String getChildId() {
+	public String getChildId()
+	{
 		return ChildId;
 	}
 
-	public void setChildId(String childId) {
+	public void setChildId(String childId) 
+	{
 		ChildId = Individual.ParseIdFromString(childId);
 	}
 
-	public Date getDivorced() {
+	public Date getDivorced() 
+	{
 		return Divorced;
 	}
 
-	public void setDivorced(Date divorced) {
+	public void setDivorced(Date divorced) 
+	{
 		Divorced = divorced;
 	}
 }

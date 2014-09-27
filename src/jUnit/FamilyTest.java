@@ -24,6 +24,7 @@ import org.junit.Test;
 public class FamilyTest {
 	
 	final static String ID_FAMILY = "123";
+	
 	final static String ID_CHILD = "234";
 	final static String ID_HUSBAND = "999";
 	final static String ID_WIFE = "543";
@@ -57,7 +58,7 @@ public class FamilyTest {
 	public void tearDown() throws Exception {}
 	
 	@Test
-	public void testSetIdWithNoValue()
+	public void testSetIdWithNoValueThrowsException()
 	{
 		boolean exceptionThrown = false;
 		
@@ -75,31 +76,31 @@ public class FamilyTest {
 	}
 
 	@Test
-	public void testGetId()
+	public void testGetIdEqual()
 	{
 		assertEquals(ID_FAMILY, FAMILY.getId());
 	}
 	
 	@Test
-	public void testGetChildId()
+	public void testGetChildIdEqual()
 	{
 		assertEquals(ID_CHILD, FAMILY.getChildId());
 	}
 	
 	@Test
-	public void testGetWifeId()
+	public void testGetWifeIdEqual()
 	{
 		assertEquals(ID_WIFE, FAMILY.getWifeId());
 	}
 	
 	@Test
-	public void testGetHusbandId()
+	public void testGetHusbandIdEqual()
 	{
 		assertEquals(ID_HUSBAND, FAMILY.getHusbandId());
 	}
 	
 	@Test
-	public void testGetMarried()
+	public void testGetMarriedEqual()
 	{
 		try
 		{
@@ -112,7 +113,7 @@ public class FamilyTest {
 	}
 	
 	@Test
-	public void testGetDivorced()
+	public void testGetDivorcedEqual()
 	{
 		try
 		{
