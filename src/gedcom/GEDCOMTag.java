@@ -87,7 +87,7 @@ public class GEDCOMTag
 		
 		if(!GEDCOMTag.isNameValid(this.Level, name))
 		{
-			throw new IllegalArgumentException("Specified tag name of "+ name + " is invalid for the given tag level of " + name);
+			throw new IllegalArgumentException("Specified tag name of "+ name + " is invalid");
 		}
 	}
 	
