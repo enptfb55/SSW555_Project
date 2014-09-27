@@ -53,6 +53,10 @@ public class Family
 		{
 			throw new IllegalArgumentException("Husband with id " + husband.getId() + " may only be of male sex type for family with id " + this.getId());
 		}
+		else if(husband.getDeath() != null) //should perhaps thrown a different exception as to catch the exact error type instead of determine from message
+		{
+			throw new IllegalArgumentException("Husband with id " + husband.getId() + " is dead and may not be married in family with id " + this.getId());
+		}
 	}
 
 	public Individual getWife()
@@ -66,7 +70,11 @@ public class Family
 		
 		if(wife.getSex() != Individual.SEX_FEMALE && wife.getSex() != '\u0000')
 		{
-			throw new IllegalArgumentException("Female with id " + wife.getId() + " may only be of male sex type for family with id " + this.getId());
+			throw new IllegalArgumentException("Wife with id " + wife.getId() + " may only be of female sex type for family with id " + this.getId());
+		}
+		else if(wife.getDeath() != null) //should perhaps thrown a different exception as to catch the exact error type instead of determine from message
+		{
+			throw new IllegalArgumentException("Wife with id " + wife.getId() + " is dead and may not be married in family with id " + this.getId());
 		}
 	}
 

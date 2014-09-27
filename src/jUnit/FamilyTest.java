@@ -105,6 +105,89 @@ public class FamilyTest {
 		
 		assertTrue(exceptionThrown);
 	}
+	
+	@Test
+	public void testSetDeadHusbandInMarriageThrowsException()
+	{
+		boolean exceptionThrown = false;
+		
+		try
+		{
+			Family f = new Family(ID_FAMILY);
+			f.setMarried(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(DATE_MARRIED_STRING));
+			
+			Individual male = new Individual("123");
+			male.setDeath(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(DATE_MARRIED_STRING));
+			
+			f.setHusband(male);
+			
+			fail("Setting the husband of a family to a dead person did not throw an exception when it should have");
+		}
+		catch (IllegalArgumentException e)
+		{
+			exceptionThrown = true;
+		} catch (ParseException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		assertTrue(exceptionThrown);
+	}
+	
+	@Test
+	public void testSetWifeAsMaleThrowsException()
+	{
+		boolean exceptionThrown = false;
+		
+		try
+		{
+			Family f = new Family(ID_FAMILY);
+			
+			Individual male = new Individual("123");
+			male.setSex(Individual.SEX_MALE);
+			
+			f.setHusband(male);
+			f.setWife(male);
+			
+			fail("Setting the wife of a family to a male did not throw an exception when it should have");
+		}
+		catch (IllegalArgumentException e)
+		{
+			exceptionThrown = true;
+		}
+		
+		assertTrue(exceptionThrown);
+	}
+	
+	@Test
+	public void testSetDeadWifeInMarriageThrowsException()
+	{
+		boolean exceptionThrown = false;
+		
+		try
+		{
+			Family f = new Family(ID_FAMILY);
+			f.setMarried(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(DATE_MARRIED_STRING));
+			
+			Individual female = new Individual("123");
+			female.setDeath(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(DATE_MARRIED_STRING));
+			
+			f.setWife(female);
+			
+			fail("Setting the wife of a family to a dead person did not throw an exception when it should have");
+		}
+		catch (IllegalArgumentException e)
+		{
+			exceptionThrown = true;
+		} catch (ParseException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		assertTrue(exceptionThrown);
+	}
 
 	@Test
 	public void testGetIdEqual()
