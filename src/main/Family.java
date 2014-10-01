@@ -1,6 +1,9 @@
 package main;
-import java.text.SimpleDateFormat;
+
 import java.util.Date;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 public class Family
 {
@@ -9,7 +12,7 @@ public class Family
 	private Date Divorced;
 	private Individual Husband;
 	private Individual Wife;
-	private Individual Child;
+	private TreeMap <String, Individual> Children = new TreeMap <String, Individual>();
 
 	public Family(String identifier)
 	{
@@ -56,6 +59,16 @@ public class Family
 		else if(husband.getDeath() != null) //should perhaps thrown a different exception as to catch the exact error type instead of determine from message
 		{
 			throw new IllegalArgumentException("Husband with id " + husband.getId() + " is dead and may not be married in family with id " + this.getId());
+		} 
+		else if (Children.size() > 0)
+		{
+			for (Map.Entry<String, Individual> childEntry : Children.entrySet()) {
+				Individual child = childEntry.getValue();
+				
+				if (husband.getId() == child.getId()) {
+					throw new IllegalArgumentException("Husband with id " + husband.getId() + " is also a child in family with id " + this.getId());
+				}
+			}
 		}
 	}
 
@@ -76,16 +89,31 @@ public class Family
 		{
 			throw new IllegalArgumentException("Wife with id " + wife.getId() + " is dead and may not be married in family with id " + this.getId());
 		}
+		else if (Children.size() > 0)
+		{
+			for (Map.Entry<String, Individual> childEntry : Children.entrySet()) {
+				Individual child = childEntry.getValue();
+				
+				if (wife.getId() == child.getId()) {
+					throw new IllegalArgumentException("Husband with id " + wife.getId() + " is also a child in family with id " + this.getId());
+				}
+			}
+		}
 	}
 
-	public Individual getChild()
+	public Individual getChild(String childName)
 	{
-		return Child;
+		return Children.get(childName);
 	}
 
-	public void setChild(Individual child) 
+	public void addChild(Individual child) 
 	{
-		Child = child;
+		Children.put(child.getName(), child);
+	}
+	
+	public TreeMap <String, Individual> getChildren ()
+	{
+		return Children;
 	}
 
 	public Date getDivorced() 

@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
@@ -171,7 +170,7 @@ public class GEDCOMParser {
 								
 							case GEDCOMTag.NAME_CHIL:
 								Family fChild = families.get(lastId);
-								fChild.setChild(individuals.get(Individual.ParseIdFromString(tag.getArgument())));
+								fChild.addChild(individuals.get(Individual.ParseIdFromString(tag.getArgument())));
 								families.put(lastId, fChild);
 								break;
 						}

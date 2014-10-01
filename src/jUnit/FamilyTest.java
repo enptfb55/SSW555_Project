@@ -7,14 +7,8 @@ import static org.junit.Assert.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 
-import gedcom.GEDCOMELine;
-import gedcom.GEDCOMParser;
-import gedcom.GEDCOMTag;
 import main.Family;
 import main.Individual;
 
@@ -44,7 +38,10 @@ public class FamilyTest {
 	{
 		FAMILY.setHusband(INDIVIDUAL_HUSBAND);
 		FAMILY.setWife(INDIVIDUAL_WIFE);
-		FAMILY.setChild(INDIVIDUAL_CHILD);
+		
+		INDIVIDUAL_CHILD.setName(ID_CHILD);
+		
+		FAMILY.addChild(INDIVIDUAL_CHILD);
 		
 		try
 		{
@@ -198,7 +195,8 @@ public class FamilyTest {
 	@Test
 	public void testGetChildIdEqual()
 	{
-		assertEquals(ID_CHILD, FAMILY.getChild().getId());
+		// TODO fix this
+		assertEquals(ID_CHILD, FAMILY.getChild(ID_CHILD).getId());
 	}
 	
 	@Test
@@ -237,6 +235,38 @@ public class FamilyTest {
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	@Test
+	public void testSetMarriedToChild ()
+	{
+		boolean exceptionThrown = false;
+		
+		try
+		{
+			Family f = new Family(ID_FAMILY);
+			f.setMarried(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(DATE_MARRIED_STRING));
+			
+			Individual child = new Individual(ID_CHILD);
+			
+			child.setName(ID_CHILD);
+			
+			f.addChild(child);
+			
+			f.setWife(child);
+			
+			fail("Setting the wife of a family to a dead person did not throw an exception when it should have");
+		}
+		catch (IllegalArgumentException e)
+		{
+			exceptionThrown = true;
+		} catch (ParseException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		assertTrue(exceptionThrown);
 	}
 
 }
