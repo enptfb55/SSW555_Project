@@ -14,22 +14,16 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
-<<<<<<< HEAD
-<<<<<<< HEAD
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-=======
->>>>>>> FETCH_HEAD
-=======
->>>>>>> FETCH_HEAD
+
 
 import main.Family;
 import main.Individual;
 
 public class GEDCOMParser {
 	
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 	static final int flags = Pattern.CASE_INSENSITIVE | Pattern.MULTILINE;
 	static final String validTags = "INDI|NAME|SEX|BIRT|DEAT|" +
 						"FAMC|FAMS|FAM|MARR|HUSB|WIFE|" +
@@ -42,10 +36,7 @@ public class GEDCOMParser {
 	static final Pattern validTagPattern = Pattern.compile("\\s?\\d\\s(" + validTags + ")\\s*");
 	static final Pattern argPattern = Pattern.compile("\\s?\\d\\s[\\w|\\@]+\\s+(.*)");
 		
-=======
->>>>>>> FETCH_HEAD
-=======
->>>>>>> FETCH_HEAD
+
 	TreeMap<String, Individual> individuals = new TreeMap<String, Individual>();
 	TreeMap<String, Family> families = new TreeMap<String, Family>();
 	List<GEDCOMError> errors = new LinkedList<GEDCOMError>();
