@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import utils.DiffDates;
+
 public class Family
 {
 	private String Id;
@@ -60,7 +62,19 @@ public class Family
 		{
 			throw new IllegalArgumentException("Husband with id " + husband.getId() + " is dead and may not be married in family with id " + this.getId());
 		} 
-		else if (Children.size() > 0)
+		else if (husband.getBirthday() != null && 
+				Married != null)
+		{
+			DiffDates diff = new DiffDates (Married, husband.getBirthday());
+			
+			if (diff.Years() < 18) {
+				throw new IllegalArgumentException("Husband with id " + husband.getId() + " is younger than 18 and may not be married in family with id " + this.getId());
+			}
+			
+		}
+		
+		
+		if (Children.size() > 0)
 		{
 			for (Map.Entry<String, Individual> childEntry : Children.entrySet()) {
 				Individual child = childEntry.getValue();
@@ -108,6 +122,32 @@ public class Family
 
 	public void addChild(Individual child) 
 	{
+		
+		if (child.getBirthday() != null &&
+				Husband != null &&
+				Wife != null) 
+		{
+			
+			if (Husband.getDeath() != null &&
+				Wife.getDeath() != null &&
+				child.getBirthday().after(Husband.getDeath()) && 
+				child.getBirthday().after(Wife.getDeath()))
+			{
+				throw new IllegalArgumentException("Child with id " + child.getId() + " cannot be born after both parents die");
+				
+			}
+			else if ((Husband.getBirthday() != null && 
+						child.getBirthday().before(Husband.getBirthday()) ||
+					 (Wife.getBirthday() != null &&
+						child.getBirthday().before(Wife.getBirthday()))))
+			{
+				throw new IllegalArgumentException("Child with id " + child.getId() + " cannot be born before either parent");
+			}
+			
+		
+		}
+		
+		
 		Children.put(child.getName(), child);
 	}
 	

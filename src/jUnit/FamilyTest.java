@@ -268,5 +268,85 @@ public class FamilyTest {
 		
 		assertTrue(exceptionThrown);
 	}
+	
+	@Test
+	public void testSetChildBirthDateAfterParentsDeath ()
+	{
+		boolean exceptionThrown = false;
+		
+		String childBirthday = "December 18, 1934";
+		String parentsDeathDate = DATE_DIVORCED_STRING;
+		
+		try
+		{
+			Family f = new Family(ID_FAMILY);
+			Individual father = new Individual(ID_HUSBAND);
+			Individual mother = new Individual(ID_WIFE);
+			
+			f.setMarried(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(DATE_MARRIED_STRING));
+			
+			f.setHusband(father);
+			f.setWife(mother);
+			
+			father.setDeath(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(parentsDeathDate));
+			mother.setDeath(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(parentsDeathDate));
+			
+			Individual child = new Individual(ID_CHILD);
+			
+			child.setName(ID_CHILD);
+			
+			child.setBirthday(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(childBirthday));
+			
+			f.addChild(child);
+			
+			
+			fail("Setting the wife of a family to a dead person did not throw an exception when it should have");
+		}
+		catch (IllegalArgumentException e)
+		{
+			exceptionThrown = true;
+		} catch (ParseException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		assertTrue(exceptionThrown);
+	}
+	
+	@Test
+	public void testSetMarriageBeforeEighteen()
+	{
+		boolean exceptionThrown = false;
+		
+		String husbandsBirthDate = "December 18, 1934";
+		String marriageDate = "December 18, 1944";
+		
+		try
+		{
+			Family f = new Family(ID_FAMILY);
+			Individual husband = new Individual(ID_HUSBAND);
+			
+			husband.setBirthday(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(husbandsBirthDate));
+			
+			f.setMarried(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(marriageDate));
+			
+			f.setHusband(husband);
+			
+			
+			
+			fail("Setting the wife of a family to a dead person did not throw an exception when it should have");
+		}
+		catch (IllegalArgumentException e)
+		{
+			exceptionThrown = true;
+		} catch (ParseException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		assertTrue(exceptionThrown);
+	}
 
 }
