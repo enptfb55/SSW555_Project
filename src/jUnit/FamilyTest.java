@@ -114,7 +114,7 @@ public class FamilyTest {
 		try
 		{
 			Family f = new Family(ID_FAMILY);
-			f.setMarried(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(DATE_MARRIED_STRING));
+			f.setMarried(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(DATE_DIVORCED_STRING));
 			
 			Individual male = new Individual("123");
 			male.setDeath(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(DATE_MARRIED_STRING));
@@ -168,7 +168,7 @@ public class FamilyTest {
 		try
 		{
 			Family f = new Family(ID_FAMILY);
-			f.setMarried(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(DATE_MARRIED_STRING));
+			f.setMarried(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(DATE_DIVORCED_STRING));
 			
 			Individual female = new Individual("123");
 			female.setDeath(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(DATE_MARRIED_STRING));
