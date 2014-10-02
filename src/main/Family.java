@@ -58,32 +58,8 @@ public class Family
 		{
 			throw new IllegalArgumentException("Husband with id " + husband.getId() + " may only be of male sex type for family with id " + this.getId());
 		}
-		else if(husband.getDeath() != null) //should perhaps thrown a different exception as to catch the exact error type instead of determine from message
-		{
-			throw new IllegalArgumentException("Husband with id " + husband.getId() + " is dead and may not be married in family with id " + this.getId());
-		} 
-		else if (husband.getBirthday() != null && 
-				Married != null)
-		{
-			DiffDates diff = new DiffDates (Married, husband.getBirthday());
-			
-			if (diff.Years() < 18) {
-				throw new IllegalArgumentException("Husband with id " + husband.getId() + " is younger than 18 and may not be married in family with id " + this.getId());
-			}
-			
-		}
 		
-		
-		if (Children.size() > 0)
-		{
-			for (Map.Entry<String, Individual> childEntry : Children.entrySet()) {
-				Individual child = childEntry.getValue();
-				
-				if (husband.getId() == child.getId()) {
-					throw new IllegalArgumentException("Husband with id " + husband.getId() + " is also a child in family with id " + this.getId());
-				}
-			}
-		}
+		VerifyMarriage (husband);
 	}
 
 	public Individual getWife()
@@ -99,20 +75,43 @@ public class Family
 		{
 			throw new IllegalArgumentException("Wife with id " + wife.getId() + " may only be of female sex type for family with id " + this.getId());
 		}
-		else if(wife.getDeath() != null) //should perhaps thrown a different exception as to catch the exact error type instead of determine from message
+		
+		VerifyMarriage (wife);
+		
+	}
+	
+	private Boolean VerifyMarriage (Individual spouse)
+	{
+		
+		if( spouse.getDeath() != null &&
+		    Married != null &&
+		    spouse.getDeath().after(Married)) //should perhaps thrown a different exception as to catch the exact error type instead of determine from message
 		{
-			throw new IllegalArgumentException("Wife with id " + wife.getId() + " is dead and may not be married in family with id " + this.getId());
+			throw new IllegalArgumentException("Wife with id " + spouse.getId() + " is dead and may not be married in family with id " + this.getId());
 		}
-		else if (Children.size() > 0)
+		else if (spouse.getBirthday() != null && 
+				Married != null)
+		{
+			DiffDates diff = new DiffDates (Married, spouse.getBirthday());
+			
+			if (diff.Years() < 18) {
+				throw new IllegalArgumentException("Husband with id " + spouse.getId() + " is younger than 18 and may not be married in family with id " + this.getId());
+			}
+			
+		}
+		
+		if (Children.size() > 0)
 		{
 			for (Map.Entry<String, Individual> childEntry : Children.entrySet()) {
 				Individual child = childEntry.getValue();
 				
-				if (wife.getId() == child.getId()) {
-					throw new IllegalArgumentException("Husband with id " + wife.getId() + " is also a child in family with id " + this.getId());
+				if (spouse.getId() == child.getId()) {
+					throw new IllegalArgumentException("Husband with id " + spouse.getId() + " is also a child in family with id " + this.getId());
 				}
 			}
 		}
+		
+		return true;
 	}
 
 	public Individual getChild(String childName)
