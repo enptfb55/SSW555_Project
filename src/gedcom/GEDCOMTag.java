@@ -68,12 +68,13 @@ public class GEDCOMTag
 	
 	public void setLevel(String level)
 	{
-		Level = level;
-
 		if(!GEDCOMTag.isLevelValid(level))
 		{
-			throw new IllegalArgumentException("Specified tag level of " + level + " is invalid");
+			//perhaps create IllegalTagLevelException?
+			throw new IllegalArgumentException("Specified tag level is invalid");
 		}
+		
+		Level = level;
 	}
 	
 	public String getName()
@@ -83,12 +84,13 @@ public class GEDCOMTag
 	
 	public void setName(String name)
 	{
-		Name = name;
-		
 		if(!GEDCOMTag.isNameValid(this.Level, name))
 		{
-			throw new IllegalArgumentException("Specified tag name of "+ name + " is invalid");
+			//perhaps create IllegalTagNameException?
+			throw new IllegalArgumentException("Specified tag name is invalid for the given tag level");
 		}
+		
+		Name = name;
 	}
 	
 	public String getArgument()

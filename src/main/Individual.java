@@ -6,8 +6,7 @@ import java.util.List;
 
 public class Individual
 {
-	public final static char SEX_MALE = 'M';
-	public final static char SEX_FEMALE = 'F';
+	private static final Date DATE_EMPTY = new Date(Long.MIN_VALUE); 
 	
 	private String Id;
 	private String Name;
@@ -20,8 +19,8 @@ public class Individual
 	public Individual(String identifier)
 	{
 		this.setId(identifier);
-		this.setBirthday(null);
-		this.setDeath(null);
+		this.setBirthday(DATE_EMPTY);
+		this.setDeath(DATE_EMPTY);
 		this.setChildOfFamilyIDs(new LinkedList<String>());
 		this.setSpouseOfFamilyIDs(new LinkedList<String>());
 	}
@@ -38,12 +37,12 @@ public class Individual
 
 	public void setId(String id)
 	{
-		Id = id;
-		
 		if(id.isEmpty())
 		{
 			throw new IllegalArgumentException("An individual must have an id");
 		}
+		
+		Id = id;
 	}
 	
 	public String getName()
@@ -53,12 +52,12 @@ public class Individual
 	
 	public void setName(String name)
 	{
-		Name = name.replace("/", "");
-		
 		if(name.isEmpty())
 		{
 			throw new IllegalArgumentException("An individual must have a name");
 		}
+
+		Name = name.replace("/", "");
 	}	
 	
 	public Date getBirthday()
@@ -69,34 +68,14 @@ public class Individual
 	public void setBirthday(Date birthday) 
 	{
 		Birthday = birthday;
-		
-		if(this.getDeath() != null && birthday.after(this.getDeath()))
-		{
-			throw new IllegalArgumentException("Specified birth date of " 
-												+ new SimpleDateFormat("d MMM yyyy").format(birthday) 
-												+ " is after death date of " 
-												+ new SimpleDateFormat("d MMM yyyy").format(this.getDeath()) 
-												+ " for individual with id " + this.getId());
-		}
 	}
 	
-	public Date getDeath()
-	{
+	public Date getDeath() {
 		return Death;
 	}
 	
-	public void setDeath(Date death)
-	{
+	public void setDeath(Date death) {
 		Death = death;
-		
-		if(this.getBirthday() != null && death.before(this.getBirthday()))
-		{
-			throw new IllegalArgumentException("Specified death date of " 
-												+ new SimpleDateFormat("d MMM yyyy").format(death) 
-												+ " is before birth date of " 
-												+ new SimpleDateFormat("d MMM yyyy").format(this.getBirthday()) 
-												+ " for individual with id " + this.getId());
-		}
 	}
 	
 	public List<String> getChildOfFamilyIDs()
@@ -128,22 +107,21 @@ public class Individual
 		return "Id:\t\t\t" + this.getId()
 				+ "\nName:\t\t\t" + this.getName()
 				+ "\nSex:\t\t\t" + this.getSex()
-				+ "\nBirthday:\t\t" + (this.getBirthday() == null ? "" : new SimpleDateFormat("d MMM yyyy").format(this.getBirthday()))
-				+ "\nDeath:\t\t\t" + (this.getDeath() == null ? "" : new SimpleDateFormat("d MMM yyyy").format(this.getDeath()))
+				+ "\nBirthday:\t\t" + (this.getBirthday() == DATE_EMPTY ? "" : new SimpleDateFormat("d MMM yyyy").format(this.getBirthday()))
+				+ "\nDeath:\t\t\t" + (this.getDeath() == DATE_EMPTY ? "" : new SimpleDateFormat("d MMM yyyy").format(this.getDeath()))
 				+ "\nChild of Families:\t" + this.getChildOfFamilyIDs().toString().replace("[", "").replace("]", "")
 				+ "\nSpouse of Families:\t" + this.getSpouseOfFamilyIDs().toString().replace("[", "").replace("]", "")
 				+ "\n";
 	}
 
-	public void setSex(char sex)
-	{
-		Sex = sex;
-		
+	public void setSex(char sex) {
 		//should probably make these static finals or perhaps create a sex-like enum/class
-		if(sex != SEX_MALE && sex != SEX_FEMALE)
-		{ 
-			throw new IllegalArgumentException("The specified individual sex of " + sex + " is invalid -- " + SEX_MALE + " and " + SEX_FEMALE + " only.");
+		if(sex != 'M' && sex != 'F')
+		{
+			throw new IllegalArgumentException("The specified individual sex is invalid -- M and F only.");
 		}
+		
+		Sex = sex;
 	}
 	
 	

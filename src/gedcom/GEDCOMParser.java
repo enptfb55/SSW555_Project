@@ -10,19 +10,22 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.Vector;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 
 import main.Family;
 import main.Individual;
 
+/**
+ * @class GEDCOMParser
+ * @author samato
+ *
+ */
 public class GEDCOMParser {
 	
-
 	static final int flags = Pattern.CASE_INSENSITIVE | Pattern.MULTILINE;
 	static final String validTags = "INDI|NAME|SEX|BIRT|DEAT|" +
 						"FAMC|FAMS|FAM|MARR|HUSB|WIFE|" +
@@ -34,17 +37,21 @@ public class GEDCOMParser {
 	static final Pattern tagPattern = Pattern.compile("\\s?\\d\\s([\\w|\\@]+)\\s*");
 	static final Pattern validTagPattern = Pattern.compile("\\s?\\d\\s(" + validTags + ")\\s*");
 	static final Pattern argPattern = Pattern.compile("\\s?\\d\\s[\\w|\\@]+\\s+(.*)");
-		
-
+	
+	public Vector<GEDCOMELine> mGLines = new Vector<GEDCOMELine>();
+	
 	TreeMap<String, Individual> individuals = new TreeMap<String, Individual>();
 	TreeMap<String, Family> families = new TreeMap<String, Family>();
-	List<GEDCOMError> errors = new LinkedList<GEDCOMError>();
+
 	
-	public GEDCOMParser ()
-	{
+	public GEDCOMParser () {
 		
 	}
 	
+	/**
+	 * @throws IOException 
+	 * @brief Constructor
+	 */
 	public GEDCOMParser (String sFilePath) throws IOException {
 		ParseFile(sFilePath);
 	}
@@ -143,7 +150,7 @@ public class GEDCOMParser {
 							case GEDCOMTag.NAME_FAMC:
 								Individual iFamc = individuals.get(lastId);
 								List<String> childOfFamilyIds = iFamc.getChildOfFamilyIDs();
-								childOfFamilyIds.add(Individual.ParseIdFromString(tag.getArgument()));
+								childOfFamilyIds.add(tag.getArgument().replace("@", ""));
 								iFamc.setChildOfFamilyIDs(childOfFamilyIds);
 								individuals.put(lastId, iFamc);
 								break;
@@ -151,26 +158,26 @@ public class GEDCOMParser {
 							case GEDCOMTag.NAME_FAMS:
 								Individual iFams = individuals.get(lastId);
 								List<String> spouseOfFamilyIds = iFams.getSpouseOfFamilyIDs();
-								spouseOfFamilyIds.add(Individual.ParseIdFromString(tag.getArgument()));
+								spouseOfFamilyIds.add(tag.getArgument().replace("@", ""));
 								iFams.setSpouseOfFamilyIDs(spouseOfFamilyIds);
 								individuals.put(lastId, iFams);
 								break;
 							
 							case GEDCOMTag.NAME_HUSB:
 								Family fHusband = families.get(lastId);
-								fHusband.setHusband(individuals.get(Individual.ParseIdFromString(tag.getArgument())));
+								fHusband.setHusbandId(tag.getArgument());
 								families.put(lastId, fHusband);
 								break;
 							
 							case GEDCOMTag.NAME_WIFE:
 								Family fWife = families.get(lastId);
-								fWife.setWife(individuals.get(Individual.ParseIdFromString(tag.getArgument())));
+								fWife.setWifeId(tag.getArgument());
 								families.put(lastId, fWife);
 								break;
 								
 							case GEDCOMTag.NAME_CHIL:
 								Family fChild = families.get(lastId);
-								fChild.addChild(individuals.get(Individual.ParseIdFromString(tag.getArgument())));
+								fChild.setChildId(tag.getArgument());
 								families.put(lastId, fChild);
 								break;
 						}
@@ -181,38 +188,36 @@ public class GEDCOMParser {
 						
 						try
 						{
-							Date d = new SimpleDateFormat("d MMM yyyy").parse(tag.getArgument());
-							
 							switch(lastTagName)
 							{
 								case GEDCOMTag.NAME_BIRT:
 									Individual iBirt = individuals.get(lastId);
-									iBirt.setBirthday(d);
+									iBirt.setBirthday(new SimpleDateFormat("d MMM yyyy").parse(tag.getArgument()));
 									individuals.put(lastId,  iBirt);
 									break;
 								
 								case GEDCOMTag.NAME_DEAT:
 									Individual iDeat = individuals.get(lastId);
-									iDeat.setDeath(d);
+									iDeat.setDeath(new SimpleDateFormat("d MMM yyyy").parse(tag.getArgument()));
 									individuals.put(lastId,  iDeat);
 									break;
 								
 								case GEDCOMTag.NAME_DIV:
 									Family fDiv = families.get(lastId);
-									fDiv.setDivorced(d);
+									fDiv.setDivorced(new SimpleDateFormat("d MMM yyyy").parse(tag.getArgument()));
 									families.put(lastId,  fDiv);
 									break;
 								
 								case GEDCOMTag.NAME_MARR:
 									Family fMarr = families.get(lastId);
-									fMarr.setMarried(d);
+									fMarr.setMarried(new SimpleDateFormat("d MMM yyyy").parse(tag.getArgument()));
 									families.put(lastId,  fMarr);
 									break;
 							}
 						}
 						catch (ParseException e)
 						{
-							errors.add(new GEDCOMError(e.getMessage()));
+							
 						}
 						
 						break;
@@ -220,11 +225,53 @@ public class GEDCOMParser {
 			}
 			catch (IllegalArgumentException e)
 			{
-				errors.add(new GEDCOMError(e.getMessage()));
+				//tag is invalid
+				//System.out.println(e.getMessage());
 			}
 			
 			tagArgument = "";
 		}
+	}
+	
+	public Boolean LineIsValid (String sLine) {
+		Matcher mMatcher = linePattern.matcher(sLine);
+		
+		if (mMatcher.find()) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public GEDCOMELine ParseLine (String line) {
+		
+		GEDCOMELine gLine = new GEDCOMELine();
+		Matcher levelMatcher = levelNumPattern.matcher(line);
+		Matcher tagMatcher = tagPattern.matcher(line);
+		//Matcher tagMatcher = validTagPattern.matcher(line);
+		Matcher argMatcher = argPattern.matcher(line);
+		
+		
+		if (levelMatcher.find ()) {
+			String sLevelNumber = new String (levelMatcher.group(1).trim());
+			int iLevelNumber = Integer.parseInt( sLevelNumber );
+			gLine.setLevelNumber( iLevelNumber );
+		}
+		
+		if (tagMatcher.find()) {
+			String sTag = new String(tagMatcher.group(1).trim());
+			gLine.setTag(sTag);
+		} else {
+			gLine.setTag ("Invalid Tag");
+		}
+		
+		if (argMatcher.find()) {
+			String sArg = new String(argMatcher.group(1).trim());
+			gLine.setArgs(sArg);
+		}
+		
+		return gLine;
+		
 	}
 	
 	public TreeMap<String, Individual> getIndividuals () {
@@ -233,10 +280,5 @@ public class GEDCOMParser {
 	
 	public TreeMap<String, Family> getFamilies () {
 		return families;
-	}
-	
-	public LinkedList<GEDCOMError> getErrors()
-	{
-		return (LinkedList<GEDCOMError>) errors;
 	}
 }

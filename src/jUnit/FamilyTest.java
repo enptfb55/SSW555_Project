@@ -7,10 +7,15 @@ import static org.junit.Assert.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
+import gedcom.GEDCOMELine;
+import gedcom.GEDCOMParser;
+import gedcom.GEDCOMTag;
 import main.Family;
-import main.Individual;
 
 import org.junit.After;
 import org.junit.Before;
@@ -19,15 +24,9 @@ import org.junit.Test;
 public class FamilyTest {
 	
 	final static String ID_FAMILY = "123";
-
 	final static String ID_CHILD = "234";
-	final static Individual INDIVIDUAL_CHILD = new Individual(ID_CHILD);
-	
 	final static String ID_HUSBAND = "999";
-	final static Individual INDIVIDUAL_HUSBAND = new Individual(ID_HUSBAND);
-	
 	final static String ID_WIFE = "543";
-	final static Individual INDIVIDUAL_WIFE = new Individual(ID_WIFE);
 	
 	final static String DATE_MARRIED_STRING = "July 8, 1902";
 	final static String DATE_DIVORCED_STRING = "December 17, 1934";
@@ -36,12 +35,9 @@ public class FamilyTest {
 	final static Family FAMILY = new Family(ID_FAMILY);
 	static
 	{
-		FAMILY.setHusband(INDIVIDUAL_HUSBAND);
-		FAMILY.setWife(INDIVIDUAL_WIFE);
-		
-		INDIVIDUAL_CHILD.setName(ID_CHILD);
-		
-		FAMILY.addChild(INDIVIDUAL_CHILD);
+		FAMILY.setHusbandId(ID_HUSBAND);
+		FAMILY.setWifeId(ID_WIFE);
+		FAMILY.setChildId(ID_CHILD);
 		
 		try
 		{
@@ -61,7 +57,7 @@ public class FamilyTest {
 	public void tearDown() throws Exception {}
 	
 	@Test
-	public void testSetIdWithNoValueThrowsException()
+	public void testSetIdWithNoValue()
 	{
 		boolean exceptionThrown = false;
 		
@@ -77,142 +73,33 @@ public class FamilyTest {
 		
 		assertTrue(exceptionThrown);
 	}
-	
-	@Test
-	public void testSetHusbandAsFemaleThrowsException()
-	{
-		boolean exceptionThrown = false;
-		
-		try
-		{
-			Family f = new Family(ID_FAMILY);
-			
-			Individual female = new Individual("123");
-			female.setSex(Individual.SEX_FEMALE);
-			
-			f.setWife(female);
-			f.setHusband(female);
-			
-			fail("Setting the husband of a family to a female did not throw an exception when it should have");
-		}
-		catch (IllegalArgumentException e)
-		{
-			exceptionThrown = true;
-		}
-		
-		assertTrue(exceptionThrown);
-	}
-	
-	@Test
-	public void testSetDeadHusbandInMarriageThrowsException()
-	{
-		boolean exceptionThrown = false;
-		
-		try
-		{
-			Family f = new Family(ID_FAMILY);
-			f.setMarried(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(DATE_MARRIED_STRING));
-			
-			Individual male = new Individual("123");
-			male.setDeath(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(DATE_MARRIED_STRING));
-			
-			f.setHusband(male);
-			
-			fail("Setting the husband of a family to a dead person did not throw an exception when it should have");
-		}
-		catch (IllegalArgumentException e)
-		{
-			exceptionThrown = true;
-		} catch (ParseException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		assertTrue(exceptionThrown);
-	}
-	
-	@Test
-	public void testSetWifeAsMaleThrowsException()
-	{
-		boolean exceptionThrown = false;
-		
-		try
-		{
-			Family f = new Family(ID_FAMILY);
-			
-			Individual male = new Individual("123");
-			male.setSex(Individual.SEX_MALE);
-			
-			f.setHusband(male);
-			f.setWife(male);
-			
-			fail("Setting the wife of a family to a male did not throw an exception when it should have");
-		}
-		catch (IllegalArgumentException e)
-		{
-			exceptionThrown = true;
-		}
-		
-		assertTrue(exceptionThrown);
-	}
-	
-	@Test
-	public void testSetDeadWifeInMarriageThrowsException()
-	{
-		boolean exceptionThrown = false;
-		
-		try
-		{
-			Family f = new Family(ID_FAMILY);
-			f.setMarried(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(DATE_MARRIED_STRING));
-			
-			Individual female = new Individual("123");
-			female.setDeath(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(DATE_MARRIED_STRING));
-			
-			f.setWife(female);
-			
-			fail("Setting the wife of a family to a dead person did not throw an exception when it should have");
-		}
-		catch (IllegalArgumentException e)
-		{
-			exceptionThrown = true;
-		} catch (ParseException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		assertTrue(exceptionThrown);
-	}
 
 	@Test
-	public void testGetIdEqual()
+	public void testGetId()
 	{
 		assertEquals(ID_FAMILY, FAMILY.getId());
 	}
 	
 	@Test
-	public void testGetChildIdEqual()
+	public void testGetChildId()
 	{
-		// TODO fix this
-		assertEquals(ID_CHILD, FAMILY.getChild(ID_CHILD).getId());
+		assertEquals(ID_CHILD, FAMILY.getChildId());
 	}
 	
 	@Test
-	public void testGetWifeIdEqual()
+	public void testGetWifeId()
 	{
-		assertEquals(ID_WIFE, FAMILY.getWife().getId());
+		assertEquals(ID_WIFE, FAMILY.getWifeId());
 	}
 	
 	@Test
-	public void testGetHusbandIdEqual()
+	public void testGetHusbandId()
 	{
-		assertEquals(ID_HUSBAND, FAMILY.getHusband().getId());
+		assertEquals(ID_HUSBAND, FAMILY.getHusbandId());
 	}
 	
 	@Test
-	public void testGetMarriedEqual()
+	public void testGetMarried()
 	{
 		try
 		{
@@ -225,7 +112,7 @@ public class FamilyTest {
 	}
 	
 	@Test
-	public void testGetDivorcedEqual()
+	public void testGetDivorced()
 	{
 		try
 		{
@@ -235,118 +122,6 @@ public class FamilyTest {
 		{
 			e.printStackTrace();
 		}
-	}
-	
-	@Test
-	public void testSetMarriedToChild ()
-	{
-		boolean exceptionThrown = false;
-		
-		try
-		{
-			Family f = new Family(ID_FAMILY);
-			f.setMarried(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(DATE_MARRIED_STRING));
-			
-			Individual child = new Individual(ID_CHILD);
-			
-			child.setName(ID_CHILD);
-			
-			f.addChild(child);
-			
-			f.setWife(child);
-			
-			fail("Setting the wife of a family to a dead person did not throw an exception when it should have");
-		}
-		catch (IllegalArgumentException e)
-		{
-			exceptionThrown = true;
-		} catch (ParseException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		assertTrue(exceptionThrown);
-	}
-	
-	@Test
-	public void testSetChildBirthDateAfterParentsDeath ()
-	{
-		boolean exceptionThrown = false;
-		
-		String childBirthday = "December 18, 1934";
-		String parentsDeathDate = DATE_DIVORCED_STRING;
-		
-		try
-		{
-			Family f = new Family(ID_FAMILY);
-			Individual father = new Individual(ID_HUSBAND);
-			Individual mother = new Individual(ID_WIFE);
-			
-			f.setMarried(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(DATE_MARRIED_STRING));
-			
-			f.setHusband(father);
-			f.setWife(mother);
-			
-			father.setDeath(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(parentsDeathDate));
-			mother.setDeath(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(parentsDeathDate));
-			
-			Individual child = new Individual(ID_CHILD);
-			
-			child.setName(ID_CHILD);
-			
-			child.setBirthday(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(childBirthday));
-			
-			f.addChild(child);
-			
-			
-			fail("Setting the wife of a family to a dead person did not throw an exception when it should have");
-		}
-		catch (IllegalArgumentException e)
-		{
-			exceptionThrown = true;
-		} catch (ParseException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		assertTrue(exceptionThrown);
-	}
-	
-	@Test
-	public void testSetMarriageBeforeEighteen()
-	{
-		boolean exceptionThrown = false;
-		
-		String husbandsBirthDate = "December 18, 1934";
-		String marriageDate = "December 18, 1944";
-		
-		try
-		{
-			Family f = new Family(ID_FAMILY);
-			Individual husband = new Individual(ID_HUSBAND);
-			
-			husband.setBirthday(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(husbandsBirthDate));
-			
-			f.setMarried(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(marriageDate));
-			
-			f.setHusband(husband);
-			
-			
-			
-			fail("Setting the wife of a family to a dead person did not throw an exception when it should have");
-		}
-		catch (IllegalArgumentException e)
-		{
-			exceptionThrown = true;
-		} catch (ParseException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		assertTrue(exceptionThrown);
 	}
 
 }
