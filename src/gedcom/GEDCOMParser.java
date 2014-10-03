@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 
 
 import main.Family;
+import main.FindAnomaly;
 import main.Individual;
 
 public class GEDCOMParser {
@@ -40,6 +41,7 @@ public class GEDCOMParser {
 	TreeMap<String, Individual> individuals = new TreeMap<String, Individual>();
 	TreeMap<String, Family> families = new TreeMap<String, Family>();
 	List<GEDCOMError> errors = new LinkedList<GEDCOMError>();
+	List<GEDCOMAnomaly> anomalies = new LinkedList<GEDCOMAnomaly>();
 	
 	public GEDCOMParser ()
 	{
@@ -236,8 +238,31 @@ public class GEDCOMParser {
 		return families;
 	}
 	
+	public LinkedList<GEDCOMAnomaly> getAnomalies()
+	{
+		return (LinkedList<GEDCOMAnomaly>) anomalies;
+	}
+	
 	public LinkedList<GEDCOMError> getErrors()
 	{
 		return (LinkedList<GEDCOMError>) errors;
+	}
+	
+	public void getAnomalies(GEDCOMParser gp) {
+		
+		TreeMap<String, Individual> i =gp.getIndividuals();
+		TreeMap<String, Family> fam = gp.getFamilies();
+		FindAnomaly fn = new FindAnomaly();
+		
+		for ( String s : i.keySet()) {
+			boolean tf = fn.hasmorethanonespouse(i, fam,i.get(s)) ;
+			// System.out.println("tf =" +tf);
+			if(tf == true) {
+				anomalies.add(new GEDCOMAnomaly("Anomaly - " + i.get(s).getName() + " married more than once at the same time"));
+				
+			}
+		
+		}
+		
 	}
 }
