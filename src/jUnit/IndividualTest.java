@@ -7,17 +7,10 @@ import static org.junit.Assert.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 
-import gedcom.GEDCOMELine;
-import gedcom.GEDCOMParser;
-import gedcom.GEDCOMTag;
-import main.Family;
 import main.Individual;
 
 import org.junit.After;
