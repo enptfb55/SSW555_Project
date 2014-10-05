@@ -6,9 +6,9 @@ public class Family
 	private String Id;
 	private Date Married;
 	private Date Divorced;
-	private String HusbandId;
-	private String WifeId;
-	private String ChildId;
+	private Individual Husband;
+	private Individual Wife;
+	private Individual Child;
 
 	public Family(String identifier)
 	{
@@ -19,52 +19,89 @@ public class Family
 		return Id;
 	}
 
-	public void setId(String id) {
+	public void setId(String id)
+	{
+		Id = Individual.ParseIdFromString(id);
+		
 		if(id.isEmpty())
 		{
 			throw new IllegalArgumentException("A family must have an id");
 		}
-		
-		Id = id.replace("@", "");
 	}
 
-	public Date getMarried() {
+	public Date getMarried()
+	{
 		return Married;
 	}
 
-	public void setMarried(Date married) {
+	public void setMarried(Date married)
+	{
 		Married = married;
 	}
 
-	public String getHusbandId() {
-		return HusbandId;
+	public Individual getHusband()
+	{
+		return Husband;
 	}
 
-	public void setHusbandId(String husbandId) {
-		HusbandId = husbandId.replace("@", "");
+	public void setHusband(Individual husband)
+	{
+		Husband = husband;
+		
+		if(husband.getSex() != Individual.SEX_MALE && husband.getSex() != '\u0000')
+		{
+			throw new IllegalArgumentException("Husband with id " + husband.getId() + " may only be of male sex type for family with id " + this.getId());
+		}
+		
+		VerifyMarriage (husband);
 	}
 
-	public String getWifeId() {
-		return WifeId;
+	public Individual getWife()
+	{
+		return Wife;
 	}
 
-	public void setWifeId(String wifeId) {
-		WifeId = wifeId.replace("@", "");
+	public void setWife(Individual wife)
+	{
+		Wife = wife;
+		
+		if(wife.getSex() != Individual.SEX_FEMALE && wife.getSex() != '\u0000')
+		{
+			throw new IllegalArgumentException("Wife with id " + wife.getId() + " may only be of female sex type for family with id " + this.getId());
+		}
+		
+		VerifyMarriage (wife);
+		
+	}
+	
+	private void VerifyMarriage (Individual spouse)
+	{
+		
+		if( spouse.getDeath() != null &&
+			Married != null &&
+			spouse.getDeath().before(Married)) //should perhaps thrown a different exception as to catch the exact error type instead of determine from message
+		{
+			throw new IllegalArgumentException("Spouse with id " + spouse.getId() + " is dead and may not be married in family with id " + this.getId());
+		}
 	}
 
-	public String getChildId() {
-		return ChildId;
+	public Individual getChild()
+	{
+		return Child;
 	}
 
-	public void setChildId(String childId) {
-		ChildId = childId.replace("@", "");
+	public void setChild(Individual child) 
+	{
+		Child = child;
 	}
 
-	public Date getDivorced() {
+	public Date getDivorced() 
+	{
 		return Divorced;
 	}
 
-	public void setDivorced(Date divorced) {
+	public void setDivorced(Date divorced) 
+	{
 		Divorced = divorced;
 	}
 }

@@ -1,10 +1,12 @@
 package main;
+import gedcom.GEDCOMError;
 import gedcom.GEDCOMParser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.LinkedList;
 import java.util.Map;
 
 import javax.swing.JFileChooser;
@@ -86,52 +88,48 @@ public class Main
 		{
 			GEDCOMParser gParser = new GEDCOMParser (mInputFile);
 			
+			String outputText = "";
 			
-			
-			System.out.println("Individuals - ");
-			if (pwOutput != null) {
-				pwOutput.println("Individuals - ");
-			}
-			
+			outputText = "Individuals - \n";
+						
 			for (Map.Entry<String, Individual> entry : gParser.getIndividuals().entrySet())
 			{
-				System.out.println("Id:" + entry.getValue().getId() + "\tName: " + entry.getValue().getName());
-				if (pwOutput != null) {
-					pwOutput.println("Id:" + entry.getValue().getId() + "\tName: " + entry.getValue().getName());
-				}
-					
-				//System.out.println(entry.getValue().toString());
+				outputText += entry.getValue().toString() + "\n";
 			}
 			
-			System.out.println("");
-			System.out.println("Families - ");
-			
-			if (pwOutput != null) {
-				pwOutput.println("");
-				pwOutput.println("Families - ");
-			}
+			outputText += "\nFamilies - \n";
 			
 			for(Map.Entry<String, Family> entry : gParser.getFamilies().entrySet())
 			{
 				Family family = entry.getValue();
 
-				System.out.println("Id:\t\t" + family.getId());
-				System.out.println("Husband Name:\t" + gParser.getIndividuals().get(family.getHusbandId()).getName());
-				System.out.println("Wife Name:\t" + gParser.getIndividuals().get(family.getWifeId()).getName());
-				//System.out.println("\tChild Name:\t" + individuals.get(family.getChildId()).getName());
-				System.out.println("");
-				
-				if (pwOutput != null) {
-					pwOutput.println("Id:\t\t" + family.getId());
-					pwOutput.println("Husband Name:\t" + gParser.getIndividuals().get(family.getHusbandId()).getName());
-					pwOutput.println("Wife Name:\t" + gParser.getIndividuals().get(family.getWifeId()).getName());
-					//System.out.println("\tChild Name:\t" + individuals.get(family.getChildId()).getName());
-					pwOutput.println("");
-				}
-				
+				//need to add some null checking to ensure existence
+				outputText += "Id:\t\t" + family.getId() + "\n";
+				outputText += "Husband Name:\t" + (family.getHusband() != null ? family.getHusband().getName() : "") + "\n";
+				outputText += "Wife Name:\t" + (family.getWife() != null ? family.getWife().getName() : "") + "\n";
+				outputText += "Child Name:\t" + (family.getChild() != null ? family.getChild().getName() : "" ) + "\n\n";
 			}
 			
+			LinkedList<GEDCOMError> errors = gParser.getErrors();
+			
+			outputText += "\nErrors - \n";
+			
+			if(errors.size() == 0)
+			{
+				outputText += "None found";
+			}
+			else
+			{
+				for(int i = 0; i < errors.size(); i++)
+				{
+					outputText += (i+1) + ". " + errors.get(i).getMessage() + "\n";
+				}
+			}
+			
+			System.out.print(outputText);
+			
 			if (pwOutput != null) {
+				pwOutput.print(outputText);
 				pwOutput.close();
 			}
 		}
