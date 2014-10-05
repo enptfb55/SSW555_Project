@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.regex.Pattern;
 
 
 import main.Family;
@@ -22,19 +21,6 @@ import main.Individual;
 
 public class GEDCOMParser {
 	
-
-	static final int flags = Pattern.CASE_INSENSITIVE | Pattern.MULTILINE;
-	static final String validTags = "INDI|NAME|SEX|BIRT|DEAT|" +
-						"FAMC|FAMS|FAM|MARR|HUSB|WIFE|" +
-					    "CHIL|DIV|DATE|TRLR|NOTE";
-	
-	//static final Pattern tagPattern = Pattern.compile( "([\\w|\\@]+)", flags);
-	static final Pattern linePattern = Pattern.compile ("(\\s?\\d\\s[\\w|\\@]+\\s*)", flags);
-	static final Pattern levelNumPattern = Pattern.compile("^\\s?(\\d)\\s*");
-	static final Pattern tagPattern = Pattern.compile("\\s?\\d\\s([\\w|\\@]+)\\s*");
-	static final Pattern validTagPattern = Pattern.compile("\\s?\\d\\s(" + validTags + ")\\s*");
-	static final Pattern argPattern = Pattern.compile("\\s?\\d\\s[\\w|\\@]+\\s+(.*)");
-		
 
 	TreeMap<String, Individual> individuals = new TreeMap<String, Individual>();
 	TreeMap<String, Family> families = new TreeMap<String, Family>();
@@ -106,7 +92,7 @@ public class GEDCOMParser {
 					case GEDCOMTag.LEVEL_0:
 						lastTopLevelTagName = tag.getName();
 						
-						id = tag.getArgument().replace("@", ""); //should probably move this to setId methods
+						id = Individual.ParseIdFromString(tag.getArgument());
 						lastId = id;
 
 						switch(lastTopLevelTagName)
@@ -170,7 +156,7 @@ public class GEDCOMParser {
 								
 							case GEDCOMTag.NAME_CHIL:
 								Family fChild = families.get(lastId);
-								fChild.addChild(individuals.get(Individual.ParseIdFromString(tag.getArgument())));
+								fChild.setChild(individuals.get(Individual.ParseIdFromString(tag.getArgument())));
 								families.put(lastId, fChild);
 								break;
 						}

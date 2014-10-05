@@ -1,11 +1,5 @@
 package main;
-
 import java.util.Date;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import utils.DiffDates;
 
 public class Family
 {
@@ -14,7 +8,7 @@ public class Family
 	private Date Divorced;
 	private Individual Husband;
 	private Individual Wife;
-	private TreeMap <String, Individual> Children = new TreeMap <String, Individual>();
+	private Individual Child;
 
 	public Family(String identifier)
 	{
@@ -80,79 +74,25 @@ public class Family
 		
 	}
 	
-	private Boolean VerifyMarriage (Individual spouse)
+	private void VerifyMarriage (Individual spouse)
 	{
 		
 		if( spouse.getDeath() != null &&
-		    Married != null &&
-		    spouse.getDeath().after(Married)) //should perhaps thrown a different exception as to catch the exact error type instead of determine from message
+			Married != null &&
+			spouse.getDeath().before(Married)) //should perhaps thrown a different exception as to catch the exact error type instead of determine from message
 		{
-			throw new IllegalArgumentException("Wife with id " + spouse.getId() + " is dead and may not be married in family with id " + this.getId());
+			throw new IllegalArgumentException("Spouse with id " + spouse.getId() + " is dead and may not be married in family with id " + this.getId());
 		}
-		else if (spouse.getBirthday() != null && 
-				Married != null)
-		{
-			DiffDates diff = new DiffDates (Married, spouse.getBirthday());
-			
-			if (diff.Years() < 18) {
-				throw new IllegalArgumentException("Husband with id " + spouse.getId() + " is younger than 18 and may not be married in family with id " + this.getId());
-			}
-			
-		}
-		
-		if (Children.size() > 0)
-		{
-			for (Map.Entry<String, Individual> childEntry : Children.entrySet()) {
-				Individual child = childEntry.getValue();
-				
-				if (spouse.getId() == child.getId()) {
-					throw new IllegalArgumentException("Husband with id " + spouse.getId() + " is also a child in family with id " + this.getId());
-				}
-			}
-		}
-		
-		return true;
 	}
 
-	public Individual getChild(String childName)
+	public Individual getChild()
 	{
-		return Children.get(childName);
+		return Child;
 	}
 
-	public void addChild(Individual child) 
+	public void setChild(Individual child) 
 	{
-		
-		if (child.getBirthday() != null &&
-				Husband != null &&
-				Wife != null) 
-		{
-			
-			if (Husband.getDeath() != null &&
-				Wife.getDeath() != null &&
-				child.getBirthday().after(Husband.getDeath()) && 
-				child.getBirthday().after(Wife.getDeath()))
-			{
-				throw new IllegalArgumentException("Child with id " + child.getId() + " cannot be born after both parents die");
-				
-			}
-			else if ((Husband.getBirthday() != null && 
-						child.getBirthday().before(Husband.getBirthday()) ||
-					 (Wife.getBirthday() != null &&
-						child.getBirthday().before(Wife.getBirthday()))))
-			{
-				throw new IllegalArgumentException("Child with id " + child.getId() + " cannot be born before either parent");
-			}
-			
-		
-		}
-		
-		
-		Children.put(child.getName(), child);
-	}
-	
-	public TreeMap <String, Individual> getChildren ()
-	{
-		return Children;
+		Child = child;
 	}
 
 	public Date getDivorced() 
