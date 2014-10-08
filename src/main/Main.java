@@ -108,11 +108,14 @@ public class Main
 				outputText += "Husband Name:\t" + (family.getHusband() != null ? family.getHusband().getName() : "") + "\n";
 				outputText += "Wife Name:\t" + (family.getWife() != null ? family.getWife().getName() : "") + "\n";
 				outputText += "Child Name:\t" + (family.getChild() != null ? family.getChild().getName() : "" ) + "\n\n";
+//				outputText += "Husband Name:\t" + (!family.getHusbandId().isEmpty() ? gParser.getIndividuals().get(family.getHusbandId()).getName() : "") + "\n";
+//				outputText += "Wife Name:\t" + (!family.getWifeId().isEmpty() ? gParser.getIndividuals().get(family.getWifeId()).getName() : "") + "\n";
+//				outputText += "Child Name:\t" + (!family.getChildId().isEmpty() ? gParser.getIndividuals().get(family.getChildId().getName() : "" ) + "\n\n";
 			}
 			
 			LinkedList<GEDCOMError> errors = gParser.getErrors();
 			
-			outputText += "\nErrors - \n";
+			outputText += "\nIssues detected - \n";
 			
 			if(errors.size() == 0)
 			{
