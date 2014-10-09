@@ -117,12 +117,25 @@ public class GEDCOMValidator
 		
 		if(i != null && families != null)
 		{
-			if(i.getSex() == Sex.MALE)
-			{
-				for (Family f : families)
-				{
-					//to do
-			    }
+//			switch(i.getSex())
+//			{
+//				case Sex.MALE:
+//					for (Family f : families)
+//					{
+//						//doesn't consider marriage/divorce dates and it should
+//						if(f.getHusband() != null && f.getWife() != null && f.getHusband().getId() == i.getId() && f.getDivorced() == null) 
+//							numValidMarriages++;
+//				    }
+//					break;
+//					
+//				case Sex.FEMALE:
+//					for (Family f : families)
+//					{
+//						//doesn't consider marriage/divorce dates and it should
+//						if(f.getHusband() != null && f.getWife() != null && f.getWife().getId() == i.getId() && f.getDivorced() != null) 
+//							numValidMarriages++;
+//				    }
+//					break;
 			}
 			
 			if(numValidMarriages > 1)
@@ -167,7 +180,7 @@ public class GEDCOMValidator
 		}
 		return false;
 	}
-	
+
 	public static boolean ChildBornBeforeParent(TreeMap<String, Individual> indi,TreeMap<String, Family> famI,Individual i)
 	{
 		Individual father;
@@ -225,36 +238,14 @@ public class GEDCOMValidator
 		return false;
 	}
 	
-	public static boolean isMarriedtoParent(TreeMap<String, Family> familyIndex,Individual i)
+	public static boolean isMarriedtoParent(Family f)
 	{
-		List<String> famlily = i.getSpouseOfFamilyIDs();
-		ArrayList<String> spouses = i.getAllSpousesIDs(familyIndex);
-		ArrayList<String> allchildren = new ArrayList<String>();
-		Iterator<String> f = famlily.iterator();
-		//Gather all children of an individual
-		while(f.hasNext())
-		{
-			String s = f.next();
-			if ( familyIndex.get(s) != null ) {
-				//System.out.println("id = " +familyIndex.get(s).getChild().getId());
-				Individual child = familyIndex.get(s).getChild();
-				if ( child != null ) {
-					System.out.println("childerm = " +familyIndex.get(s).getChild());
-					
-					allchildren.add(child.getId());
-				}
-			}
-		}
-		//For each spouse of the individual
-		for(String spouseID: spouses)
-		{
-			System.out.println("spouses Id =" +spouseID );
-			System.out.println("allchildren =" +allchildren);
-			//If the spouse is the child of an individual, return true.
-			if(allchildren.contains(spouseID))
-				return true;
-		}
 		
+		if(f.getHusband() != null && f.getWife() != null && f.getChild() != null
+			&& (f.getHusband().getId().equals(f.getChild().getId()) 
+				|| f.getWife().getId().equals(f.getChild().getId())))
+			return true;
+
 		return false;
 	}
 	

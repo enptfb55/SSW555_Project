@@ -257,12 +257,10 @@ public class GEDCOMParser {
 					}
 					
 					if(GEDCOMValidator.hasmorethanonespouse(individuals,families,i))
-					{
-						
+					{	
 						errors.add(new GEDCOMError("Individual " + i.getId() + " was found invalidly married more than once"));
 					}
 					
-								
 					if(GEDCOMValidator.ChildBornBeforeParent(individuals,families,i))
 					{
 						errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be born before a parent"));
@@ -271,10 +269,6 @@ public class GEDCOMParser {
 					if(GEDCOMValidator.isMarriedToSibling(families,individuals,i))
 					{
 						errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be married to a sibling"));
-					}
-					if(GEDCOMValidator.isMarriedtoParent(families,i))
-					{
-						errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be married to a parent"));
 					}
 				}
 				
@@ -310,6 +304,11 @@ public class GEDCOMParser {
 					if(GEDCOMValidator.isDivorceListedWithoutDateOfMarriage(f))
 					{
 						errors.add(new GEDCOMError("Family " + f.getId() + " has a dead wife listed with id " + f.getWife().getId()));
+					}
+					
+					if(GEDCOMValidator.isMarriedtoParent(f))
+					{
+						errors.add(new GEDCOMError("Family " + f.getId() + " was found to have a child married to a parent"));
 					}
 				}
 			}
