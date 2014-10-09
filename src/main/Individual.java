@@ -1,8 +1,11 @@
 package main;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TreeMap;
 
 public class Individual
 {
@@ -109,5 +112,29 @@ public class Individual
 		sex = c;
 	}
 	
+	public ArrayList<String> getAllSpousesIDs(TreeMap<String, Family> family)
+	{
+		ArrayList<String> spouses = new ArrayList<String>();
+		
+		Iterator<String> i = getSpouseOfFamilyIDs().iterator();
+	
+		while(i.hasNext())
+		{
+			String s = i.next();
+			if(family.containsKey(s))
+			{
+				if(family.get(s).getHusband()!=null && family.get(s).getWife()!=null) {
+		
+					
+				if(family.get(s).getHusband().getId().equals(id))
+					spouses.add(family.get(s).getWife().getId());
+				if(family.get(s).getWife().getId().equals(id))
+					spouses.add(family.get(s).getHusband().getId());
+				}
+			}			
+		}
+		
+		return spouses;
+	}
 	
 }

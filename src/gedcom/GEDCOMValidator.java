@@ -1,6 +1,11 @@
 package gedcom;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TreeMap;
 
 import main.Family;
 import main.Individual;
@@ -127,28 +132,132 @@ public class GEDCOMValidator
 		return false;
 	}
 	
-	public static boolean isBornBeforeAParent(Individual i, Collection<Family> families)
+
+	public static boolean hasmorethanonespouse(TreeMap<String, Individual> i,
+			TreeMap<String, Family> fam, Individual indi) {
+		for (String s : indi.getSpouseOfFamilyIDs()) {
+			for (String t : indi.getSpouseOfFamilyIDs()) {
+				
+				if(fam.get(s)!=null && fam.get(t)!=null) {
+			
+					if (!fam.get(s).equals(fam.get(t))) {
+					//System.out.println(" s = " + fam.get(s));
+					//System.out.println(" t = " + fam.get(t));
+
+					Date md = fam.get(s).getMarried();
+					Date dd = fam.get(t).getDivorced();
+					if (dd != null) {
+						if (md.before(dd)) {
+							System.out.println(indi.getName()
+											+ " Married to another person before taking divorce");
+
+						}
+						return true;
+
+					} else {
+						System.out.println(indi.getName()
+								+ "  is married more than person at same time");
+
+						return true;
+					}
+
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	public static boolean ChildBornBeforeParent(TreeMap<String, Individual> indi,TreeMap<String, Family> famI,Individual i)
 	{
-		//depends on how second parameter is... if it is the parent families already or in the coding below, it is all families
-		//if i != null && i.getBirthday() != null & parentFamilies != null
-		//need double for loop
-		//for each i.childOfFamilyIds
-		//loop over parentFamilies
-		//if parentFamilies.getId() == i.childOfFamilyIds then continue, else skip
-		//if((parentFamilies.getHusband() != null && i.getBirthday().before(parent.Families.getHusband().getBirthday())
-		//     || (parentFamilies.getWife() != null && i.getBirthday().before(parent.Families.getWife().getBirthday())) return true
-		//
+		Individual father;
+		Individual mother;
+		String fam;
+		
+		List<String> famC = i.getChildOfFamilyIDs();
+		Iterator<String> famID = famC.iterator();
+		
+		if(famID.hasNext())
+		{
+			fam = famID.next();
+			System.out.println("fam = " +fam);
+			if(famI.get(fam)!=null)
+			{
+			father = famI.get(fam).getHusband();
+			mother = famI.get(fam).getWife();
+			if(father!=null && mother != null) {
+			//System.out.println("father baday = " + father.getBirthday());
+			
+			//System.out.println("Son's birthday = " + i.getBirthday());
+			
+			if(i.getBirthday().before(father.getBirthday()) || i.getBirthday().before(mother.getBirthday()))
+			{
+				return true;
+			}
+			}
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isMarriedToSibling(TreeMap<String, Family> familyIndex, TreeMap<String, Individual> indIndex, Individual ind)
+	{
+		
+		ArrayList<String> spouses = ind.getAllSpousesIDs(familyIndex);
+	
+		ArrayList<String> familyIDsSpouseChildFamily = new ArrayList<String>();
+		for(String spouseID: spouses)
+		{
+			if(indIndex.get(spouseID)!=null)
+			{
+			familyIDsSpouseChildFamily.addAll(indIndex.get(spouseID).getChildOfFamilyIDs());
+			//familyIDsSpouseChildFamily.addAll(indIndex.get(spouseID).getChildOfFamilyIDs());
+			//System.out.println("i am here 1 = " + familyIDsSpouseChildFamily.get(0));
+			}
+		}
+		Iterator<String> i = ind.getChildOfFamilyIDs().iterator();
+		while(i.hasNext())
+		{
+			if(familyIDsSpouseChildFamily.contains(i.next()))
+				return true;
+		}
 		
 		return false;
 	}
 	
-	public static boolean isMarriedToAChildOfTheirs(Individual i, Collection<Family> families)
+	public static boolean isMarriedtoParent(TreeMap<String, Family> familyIndex,Individual i)
 	{
+		List<String> famlily = i.getSpouseOfFamilyIDs();
+		ArrayList<String> spouses = i.getAllSpousesIDs(familyIndex);
+		ArrayList<String> allchildren = new ArrayList<String>();
+		Iterator<String> f = famlily.iterator();
+		//Gather all children of an individual
+		while(f.hasNext())
+		{
+			String s = f.next();
+			if ( familyIndex.get(s) != null ) {
+				//System.out.println("id = " +familyIndex.get(s).getChild().getId());
+				Individual child = familyIndex.get(s).getChild();
+				if ( child != null ) {
+					System.out.println("childerm = " +familyIndex.get(s).getChild());
+					
+					allchildren.add(child.getId());
+				}
+			}
+		}
+		//For each spouse of the individual
+		for(String spouseID: spouses)
+		{
+			System.out.println("spouses Id =" +spouseID );
+			System.out.println("allchildren =" +allchildren);
+			//If the spouse is the child of an individual, return true.
+			if(allchildren.contains(spouseID))
+				return true;
+		}
+		
 		return false;
 	}
 	
-	public static boolean isMarriedToASibling(Individual i, Collection<Family> families)
-	{
-		return false;
-	}
+
+	
 }

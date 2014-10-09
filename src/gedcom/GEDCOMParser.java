@@ -256,14 +256,25 @@ public class GEDCOMParser {
 						errors.add(new GEDCOMError("Individual " + i.getId() + " was found invalidly married more than once"));
 					}
 					
-					if(GEDCOMValidator.isBornBeforeAParent(i, families.values()))
+					if(GEDCOMValidator.hasmorethanonespouse(individuals,families,i))
+					{
+						
+						errors.add(new GEDCOMError("Individual " + i.getId() + " was found invalidly married more than once"));
+					}
+					
+								
+					if(GEDCOMValidator.ChildBornBeforeParent(individuals,families,i))
 					{
 						errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be born before a parent"));
 					}
 					
-					if(GEDCOMValidator.isMarriedToASibling(i, families.values()))
+					if(GEDCOMValidator.isMarriedToSibling(families,individuals,i))
 					{
 						errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be married to a sibling"));
+					}
+					if(GEDCOMValidator.isMarriedtoParent(families,i))
+					{
+						errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be married to a parent"));
 					}
 				}
 				
