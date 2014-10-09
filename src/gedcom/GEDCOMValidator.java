@@ -136,7 +136,7 @@ public class GEDCOMValidator
 //							numValidMarriages++;
 //				    }
 //					break;
-			}
+//		}
 			
 			if(numValidMarriages > 1)
 				return true;
