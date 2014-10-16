@@ -1,0 +1,54 @@
+Individuals - 
+Id:			I1
+Name:			Bob
+Sex:			M
+Birthday:		4 Apr 1990
+Death:			
+Child of Families:	
+Spouse of Families:	F1
+
+Id:			I2
+Name:			Jess
+Sex:			F
+Birthday:		4 May 1990
+Death:			
+Child of Families:	
+Spouse of Families:	F1
+
+Id:			I3
+Name:			Ted
+Sex:			M
+Birthday:		4 Feb 1990
+Death:			
+Child of Families:	F1
+Spouse of Families:	
+
+
+Families - 
+Id:		F1
+Husband Name:	Bob
+Wife Name:	Jess
+Child Name:	Ted
+
+
+Issues detected - 
+1. Specified tag name of 0 HEAD is invalid
+2. Specified tag name of SOUR is invalid
+3. Specified tag name of WWW is invalid
+4. Specified tag name of FILE is invalid
+5. Specified tag name of DATE is invalid
+6. Specified tag name of DEST is invalid
+7. Specified tag name of GEDC is invalid
+8. Specified tag name of VERS is invalid
+9. Specified tag name of FORM is invalid
+10. Specified tag name of SUBM is invalid
+11. Specified tag name of NAME is invalid
+12. Specified tag name of SUBN is invalid
+13. Specified tag name of CHAR is invalid
+14. Specified tag name of GIVN is invalid
+15. Specified tag name of GIVN is invalid
+16. Specified tag name of GIVN is invalid
+17. Individual I3 was found to be born before a parent
+18. Individual I3 was found to be born before a parent
+19. Specified tag name of _CURRENT is invalid
+20. Specified tag name of 0 TRLR is invalid
