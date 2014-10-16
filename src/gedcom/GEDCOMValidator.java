@@ -146,38 +146,71 @@ public class GEDCOMValidator
 	}
 	
 
-	public static boolean hasmorethanonespouse(TreeMap<String, Individual> i,
-			TreeMap<String, Family> fam, Individual indi) {
+	public static boolean hasmorethanonespouse( TreeMap<String, Individual> i,
+											    TreeMap<String, Family> fam, 
+											    Individual indi ) 
+	{
+		
 		for (String s : indi.getSpouseOfFamilyIDs()) {
 			for (String t : indi.getSpouseOfFamilyIDs()) {
-				
-				if(fam.get(s)!=null && fam.get(t)!=null) {
-			
+
+				if (fam.get(s) != null && fam.get(t) != null) {
+
 					if (!fam.get(s).equals(fam.get(t))) {
-					//System.out.println(" s = " + fam.get(s));
-					//System.out.println(" t = " + fam.get(t));
+						// System.out.println(" s = " + fam.get(s));
+						// System.out.println(" t = " + fam.get(t));
 
-					Date md = fam.get(s).getMarried();
-					Date dd = fam.get(t).getDivorced();
-					if (dd != null) {
-						if (md.before(dd)) {
-							System.out.println(indi.getName()
-											+ " Married to another person before taking divorce");
-
+						Family s_test = fam.get(s);
+						Family t_test = fam.get(t);
+						
+						Date spouseDeathDate = null;
+						
+						if ( fam.get(t).getHusband() == indi &&
+						     fam.get(t).getWife() != null ) 
+						{
+							spouseDeathDate = fam.get(t).getWife().getDeath();
+						} 
+						else if ( fam.get(t).getHusband() != null )
+						{
+							spouseDeathDate = fam.get(t).getHusband().getDeath();
 						}
-						return true;
+						
 
-					} else {
-						System.out.println(indi.getName()
-								+ "  is married more than person at same time");
+						Date md = fam.get(s).getMarried();
+						Date dd = fam.get(t).getDivorced();
+						
+						if (spouseDeathDate != null) {
+							if (md.before(spouseDeathDate)) {
+								System.out
+								.println(indi.getName()
+										+ " Married to another person before spouse in previous marriage passed away");
+								return true;
+							}
+						}
+						
+						if (dd != null) {
+							if (md.before(dd)) {
+								System.out
+										.println(indi.getName()
+												+ " Married to another person before taking divorce");
+								
+								return true;
+							}
+							
 
-						return true;
-					}
+						} else {
+							System.out
+									.println(indi.getName()
+											+ "  is married more than person at same time");
+
+							return true;
+						}
 
 					}
 				}
 			}
 		}
+		
 		return false;
 	}
 
@@ -196,18 +229,20 @@ public class GEDCOMValidator
 			System.out.println("fam = " +fam);
 			if(famI.get(fam)!=null)
 			{
-			father = famI.get(fam).getHusband();
-			mother = famI.get(fam).getWife();
-			if(father!=null && mother != null) {
-			//System.out.println("father baday = " + father.getBirthday());
+				father = famI.get(fam).getHusband();
+				mother = famI.get(fam).getWife();
+				if(father!=null && mother != null) {
+					//System.out.println("father baday = " + father.getBirthday());
 			
-			//System.out.println("Son's birthday = " + i.getBirthday());
+					//System.out.println("Son's birthday = " + i.getBirthday());
 			
-			if(i.getBirthday().before(father.getBirthday()) || i.getBirthday().before(mother.getBirthday()))
-			{
-				return true;
-			}
-			}
+					if( i.getBirthday() != null && 
+						( i.getBirthday().before(father.getBirthday()) || 
+					      i.getBirthday().before(mother.getBirthday()) ) )
+					{
+						return true;
+					}
+				}
 			}
 		}
 		return false;
