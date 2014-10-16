@@ -21,15 +21,20 @@ import org.apache.commons.cli.Options;
 public class Main
 {
 	static Options mOptions = new Options();
-	static File mInputFile = null;
-	static File mOutputFile = null;
+
 	
 	public static void main(String[] args)
 	{	
+		File inputFile = null;
+		File outputFile = null;
+		File inputDir = null;
+		File outputDir = null;
 		
 		mOptions.addOption("help", false, "prints this help message");
 		mOptions.addOption("file", true, "input file path");
 		mOptions.addOption("out", true, "output file path");
+		mOptions.addOption("in_dir", true, "input dir file path");
+		mOptions.addOption("out_dir", true, "input dir file path");
 		
 		CommandLineParser parser = new BasicParser();
 		
@@ -43,21 +48,45 @@ public class Main
 			if (cmd.hasOption("file")) {
 				File tmpFile = new File(cmd.getOptionValue("file"));
 				if (tmpFile.exists()) {
-					mInputFile = tmpFile;
+					inputFile = tmpFile;
 				}
 			}
 			
 			if (cmd.hasOption("out")) {
-				mOutputFile = new File (cmd.getOptionValue("out"));
+				outputFile = new File (cmd.getOptionValue("out"));
 			}
+			
+			if (cmd.hasOption("in_dir")) {
+				inputDir = new File (cmd.getOptionValue("in_dir"));
+			}
+			
+			if (cmd.hasOption("out_dir")) {
+				outputDir = new File (cmd.getOptionValue("out_dir"));
+			}
+				
 			
 			
 		} catch (org.apache.commons.cli.ParseException e1) {
 			System.err.println( "Parsing failed.  Reason: " + e1.getMessage() );
 		}
 		
-		
-		if (mInputFile == null) {
+		if (inputDir != null && 
+			inputDir.isDirectory() ) 
+		{
+			File [] test = inputDir.listFiles();
+			
+			for (File file : inputDir.listFiles()) {
+				File outFile = null;
+				if (outputDir != null && outputDir.isDirectory()) {
+					outFile = new File (outputDir.getPath() + '/' + file.getName().replace(".ged", ".txt") );
+				}
+				
+				run (file, outFile);
+			}	
+			
+			return;
+			
+		} else if (inputFile == null) {
 			JFileChooser jc = new JFileChooser("data");
 		
 			jc.setFileFilter(new FileNameExtensionFilter("GEDCOM files", "ged"));
@@ -66,17 +95,26 @@ public class Main
 		
 			if (choice != JFileChooser.APPROVE_OPTION) return;
 
-			mInputFile = jc.getSelectedFile();
+			inputFile = jc.getSelectedFile();
 		}
 		
+		
+		run (inputFile, outputFile);
+		
+		
+	}
+	
+	private static void run (File inputFile, File outputFile) {
 		PrintWriter pwOutput = null;
 		
-		if (mOutputFile != null) {
+		
+		
+		if (outputFile != null) {
 			try {
 				
-				Boolean flag = mOutputFile.createNewFile();
+				Boolean flag = outputFile.createNewFile();
 				
-				pwOutput = new PrintWriter(mOutputFile);
+				pwOutput = new PrintWriter(outputFile);
 			} catch (FileNotFoundException e) {
 				System.err.println( "Unable to create output file.  Reason: " + e.getMessage() );
 			} catch (IOException e) {
@@ -86,7 +124,7 @@ public class Main
 		
 		try
 		{
-			GEDCOMParser gParser = new GEDCOMParser (mInputFile);
+			GEDCOMParser gParser = new GEDCOMParser (inputFile);
 			
 			String outputText = "";
 			
