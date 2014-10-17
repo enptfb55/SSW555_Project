@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -139,16 +140,7 @@ public class Main
 			
 			for(Map.Entry<String, Family> entry : gParser.getFamilies().entrySet())
 			{
-				Family family = entry.getValue();
-
-				//need to add some null checking to ensure existence
-				outputText += "Id:\t\t" + family.getId() + "\n";
-				outputText += "Husband Name:\t" + (family.getHusband() != null ? family.getHusband().getName() : "") + "\n";
-				outputText += "Wife Name:\t" + (family.getWife() != null ? family.getWife().getName() : "") + "\n";
-				outputText += "Child Name:\t" + (family.getChild() != null ? family.getChild().getName() : "" ) + "\n\n";
-//				outputText += "Husband Name:\t" + (!family.getHusbandId().isEmpty() ? gParser.getIndividuals().get(family.getHusbandId()).getName() : "") + "\n";
-//				outputText += "Wife Name:\t" + (!family.getWifeId().isEmpty() ? gParser.getIndividuals().get(family.getWifeId()).getName() : "") + "\n";
-//				outputText += "Child Name:\t" + (!family.getChildId().isEmpty() ? gParser.getIndividuals().get(family.getChildId().getName() : "" ) + "\n\n";
+				outputText += entry.getValue().toString()+ "\n";
 			}
 			
 			LinkedList<GEDCOMError> errors = gParser.getErrors();

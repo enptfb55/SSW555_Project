@@ -1,4 +1,5 @@
 package main;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Family
@@ -73,5 +74,16 @@ public class Family
 	public void setDivorced(Date d) 
 	{
 		divorced = d;
+	}
+	
+	public String toString()
+	{
+		return "Id:\t\t" + this.getId()
+				+ "\nHusband Name:\t" + (this.getHusband() != null ? this.getHusband().getName() : "")
+				+ "\nWife Name:\t" + (this.getWife() != null ? this.getWife().getName() : "")
+				+ "\nChild Name:\t" + (this.getChild() != null ? this.getChild().getName() : "")
+				+ "\nMarried:\t" + (this.getMarried() == null ? "" : new SimpleDateFormat("d MMM yyyy").format(this.getMarried()))
+				+ "\nDivorced:\t" + (this.getDivorced() == null ? "" : new SimpleDateFormat("d MMM yyyy").format(this.getDivorced()))
+				+ "\n";
 	}
 }

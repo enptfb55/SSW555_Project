@@ -56,7 +56,6 @@ public class GEDCOMParser {
 		
 		while ((line = br.readLine()) != null)
 		{
-			
 			level = line.substring(0, 1);
 			secondSpaceIndex = line.indexOf(" ", 2);
 			
@@ -64,14 +63,11 @@ public class GEDCOMParser {
 			if(level.equals(GEDCOMTag.LEVEL_0))
 			{
 				tagName = line.substring(secondSpaceIndex + 1);
-				
-				
+
 				if(secondSpaceIndex > 0)
 				{
 					tagArgument = line.substring(2, secondSpaceIndex);
-				}	
-				
-						
+				}
 			}
 			else if(secondSpaceIndex < 0)
 			{
@@ -203,114 +199,6 @@ public class GEDCOMParser {
 						
 						break;
 				}
-				
-				//should probably do this more elegantly because we're doing 2 passes, 1 for this, second for validation
-				for (Map.Entry<String, Family> entry : families.entrySet())
-				{
-					Family f = entry.getValue();
-					
-					//doing this because we only initially saved the ids due to uncertain order of records from input file
-					if(f.getHusband() != null) { f.setHusband(individuals.get(f.getHusband().getId())); }
-					if(f.getWife() != null) { f.setWife(individuals.get(f.getWife().getId())); }
-					if(f.getChild() != null) { f.setChild(individuals.get(f.getChild().getId())); }
-					
-					families.put(f.getId(), f); //would fail if a family has no id
-				}
-				
-				//should do this validation more elegantly using design patterns
-				for (Map.Entry<String, Individual> entry : individuals.entrySet())
-				{
-					Individual i = entry.getValue();
-							
-					if(GEDCOMValidator.isIndividualWithNoId(i))
-					{
-						errors.add(new GEDCOMError("An individual was found with no identifier"));
-					}
-					
-					if(GEDCOMValidator.isBirthdayAfterDateOfDeath(i))
-					{
-						errors.add(new GEDCOMError("Individual " + i.getId() + " has a birth date of " 
-													+ new SimpleDateFormat("d MMM yyyy").format(i.getBirthday()) + " which is >= their death date of " 
-													+ new SimpleDateFormat("d MMM yyyy").format(i.getDeath())));
-					}
-					
-					if(GEDCOMValidator.isDeathDateBeforeBirthday(i))
-					{
-						errors.add(new GEDCOMError("Individual " + i.getId() + " has a death date of " 
-													+ new SimpleDateFormat("d MMM yyyy").format(i.getBirthday()) + " which is <= their birthdate of " 
-													+ new SimpleDateFormat("d MMM yyyy").format(i.getDeath())));
-					}
-					
-					if(GEDCOMValidator.isSexInvalid(i))
-					{
-						errors.add(new GEDCOMError("Individual " + i.getId() + " has an invalid sex assignment of " + i.getSex()));
-					}
-					
-					if(GEDCOMValidator.isDeathListedWithoutBirthday(i))
-					{
-						errors.add(new GEDCOMError("Individual " + i.getId() + " has a death date listed without a corresponding birthday"));
-					}
-					
-					if(GEDCOMValidator.isMarriedMoreThanOnceAtATime(i, families.values()))
-					{
-						errors.add(new GEDCOMError("Individual " + i.getId() + " was found invalidly married more than once"));
-					}
-					
-					if(GEDCOMValidator.hasmorethanonespouse(individuals,families,i))
-					{	
-						errors.add(new GEDCOMError("Individual " + i.getId() + " was found invalidly married more than once"));
-					}
-					
-					if(GEDCOMValidator.ChildBornBeforeParent(individuals,families,i))
-					{
-						errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be born before a parent"));
-					}
-					
-					if(GEDCOMValidator.isMarriedToSibling(families,individuals,i))
-					{
-						errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be married to a sibling"));
-					}
-				}
-				
-				for (Map.Entry<String, Family> entry : families.entrySet())
-				{
-					Family f = entry.getValue();
-					
-					if(GEDCOMValidator.isFamilyWithNoId(f))
-					{
-						errors.add(new GEDCOMError("A family was found with no identifier"));
-					}
-					
-					if(GEDCOMValidator.isHusbandSexNonMale(f))
-					{
-						errors.add(new GEDCOMError("Family " + f.getId() + " has a non-male husband listed with id " + f.getHusband().getId()));
-					}
-					
-					if(GEDCOMValidator.isWifeSexNonFemale(f))
-					{
-						errors.add(new GEDCOMError("Family " + f.getId() + " has a non-female wife listed with id " + f.getWife().getId()));
-					}
-					
-					if(GEDCOMValidator.isHusbandDeadAndMarried(f))
-					{
-						errors.add(new GEDCOMError("Family " + f.getId() + " has a date of divorce listed without a corresponding day of marriage"));
-					}
-					
-					if(GEDCOMValidator.isWifeDeadAndMarried(f))
-					{
-						errors.add(new GEDCOMError("Family " + f.getId() + " has a dead wife listed with id " + f.getWife().getId()));
-					}
-					
-					if(GEDCOMValidator.isDivorceListedWithoutDateOfMarriage(f))
-					{
-						errors.add(new GEDCOMError("Family " + f.getId() + " has a dead wife listed with id " + f.getWife().getId()));
-					}
-					
-					if(GEDCOMValidator.isMarriedtoParent(f))
-					{
-						errors.add(new GEDCOMError("Family " + f.getId() + " was found to have a child married to a parent"));
-					}
-				}
 			}
 			catch (IllegalArgumentException e)
 			{
@@ -318,6 +206,114 @@ public class GEDCOMParser {
 			}
 			
 			tagArgument = "";
+		}
+		
+		//should probably do this more elegantly because we're doing 2 passes, 1 for this, second for validation
+		for (Map.Entry<String, Family> entry : families.entrySet())
+		{
+			Family f = entry.getValue();
+			
+			//doing this because we only initially saved the ids due to uncertain order of records from input file
+			if(f.getHusband() != null) { f.setHusband(individuals.get(f.getHusband().getId())); }
+			if(f.getWife() != null) { f.setWife(individuals.get(f.getWife().getId())); }
+			if(f.getChild() != null) { f.setChild(individuals.get(f.getChild().getId())); }
+			
+			families.put(f.getId(), f); //would fail if a family has no id
+		}
+		
+		//should do this validation more elegantly using design patterns
+		for (Map.Entry<String, Individual> entry : individuals.entrySet())
+		{
+			Individual i = entry.getValue();
+					
+			if(GEDCOMValidator.isIndividualWithNoId(i))
+			{
+				errors.add(new GEDCOMError("An individual was found with no identifier"));
+			}
+			
+			if(GEDCOMValidator.isBirthdayAfterDateOfDeath(i))
+			{
+				errors.add(new GEDCOMError("Individual " + i.getId() + " has a birth date of " 
+											+ new SimpleDateFormat("d MMM yyyy").format(i.getBirthday()) + " which is >= their death date of " 
+											+ new SimpleDateFormat("d MMM yyyy").format(i.getDeath())));
+			}
+			
+			if(GEDCOMValidator.isDeathDateBeforeBirthday(i))
+			{
+				errors.add(new GEDCOMError("Individual " + i.getId() + " has a death date of " 
+											+ new SimpleDateFormat("d MMM yyyy").format(i.getBirthday()) + " which is <= their birthdate of " 
+											+ new SimpleDateFormat("d MMM yyyy").format(i.getDeath())));
+			}
+			
+			if(GEDCOMValidator.isSexInvalid(i))
+			{
+				errors.add(new GEDCOMError("Individual " + i.getId() + " has an invalid sex assignment of " + i.getSex()));
+			}
+			
+			if(GEDCOMValidator.isDeathListedWithoutBirthday(i))
+			{
+				errors.add(new GEDCOMError("Individual " + i.getId() + " has a death date listed without a corresponding birthday"));
+			}
+			
+			if(GEDCOMValidator.isMarriedMoreThanOnceAtATime(i, families.values()))
+			{
+				errors.add(new GEDCOMError("Individual " + i.getId() + " was found invalidly married more than once"));
+			}
+			
+			if(GEDCOMValidator.hasmorethanonespouse(individuals,families,i))
+			{	
+				errors.add(new GEDCOMError("Individual " + i.getId() + " was found invalidly married more than once"));
+			}
+			
+			if(GEDCOMValidator.ChildBornBeforeParent(individuals,families,i))
+			{
+				errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be born before a parent"));
+			}
+
+			if(GEDCOMValidator.isMarriedToSibling(families,individuals,i))
+			{
+				errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be married to a sibling"));
+			}
+			
+			if(GEDCOMValidator.isMarriedtoParent(families,i))
+			{
+				errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be married to a parent"));
+			}
+		}
+		
+		for (Map.Entry<String, Family> entry : families.entrySet())
+		{
+			Family f = entry.getValue();
+			
+			if(GEDCOMValidator.isFamilyWithNoId(f))
+			{
+				errors.add(new GEDCOMError("A family was found with no identifier"));
+			}
+			
+			if(GEDCOMValidator.isHusbandSexNonMale(f))
+			{
+				errors.add(new GEDCOMError("Family " + f.getId() + " has a non-male husband listed with id " + f.getHusband().getId()));
+			}
+			
+			if(GEDCOMValidator.isWifeSexNonFemale(f))
+			{
+				errors.add(new GEDCOMError("Family " + f.getId() + " has a non-female wife listed with id " + f.getWife().getId()));
+			}
+			
+			if(GEDCOMValidator.isHusbandDeadAndMarried(f))
+			{
+				errors.add(new GEDCOMError("Family " + f.getId() + " has a has a dead wife listed with id " + f.getWife().getId()));
+			}
+			
+			if(GEDCOMValidator.isWifeDeadAndMarried(f))
+			{
+				errors.add(new GEDCOMError("Family " + f.getId() + " has a dead wife listed with id " + f.getWife().getId()));
+			}
+			
+			if(GEDCOMValidator.isDivorceListedWithoutDateOfMarriage(f))
+			{
+				errors.add(new GEDCOMError("Family " + f.getId() + " has a date of divorce listed without a corresponding day of marriage"));
+			}
 		}
 	}
 	

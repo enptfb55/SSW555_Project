@@ -179,30 +179,21 @@ public class GEDCOMValidator
 						Date md = fam.get(s).getMarried();
 						Date dd = fam.get(t).getDivorced();
 						
-						if (spouseDeathDate != null) {
-							if (md.before(spouseDeathDate)) {
-								System.out
-								.println(indi.getName()
-										+ " Married to another person before spouse in previous marriage passed away");
-								return true;
-							}
+						if (spouseDeathDate != null && md != null && md.before(spouseDeathDate))
+						{
+							//System.out.println(indi.getName() + " Married to another person before spouse in previous marriage passed away");
+							return true;
 						}
 						
 						if (dd != null) {
 							if (md.before(dd)) {
-								System.out
-										.println(indi.getName()
-												+ " Married to another person before taking divorce");
-								
+								//System.out.println(indi.getName() + " Married to another person before taking divorce");
 								return true;
 							}
 							
 
 						} else {
-							System.out
-									.println(indi.getName()
-											+ "  is married more than person at same time");
-
+							//System.out.println(indi.getName()+ " is married more than person at same time");
 							return true;
 						}
 
@@ -226,7 +217,7 @@ public class GEDCOMValidator
 		if(famID.hasNext())
 		{
 			fam = famID.next();
-			System.out.println("fam = " +fam);
+			//System.out.println("fam = " +fam);
 			if(famI.get(fam)!=null)
 			{
 				father = famI.get(fam).getHusband();
@@ -237,8 +228,9 @@ public class GEDCOMValidator
 					//System.out.println("Son's birthday = " + i.getBirthday());
 			
 					if( i.getBirthday() != null && 
-						( i.getBirthday().before(father.getBirthday()) || 
-					      i.getBirthday().before(mother.getBirthday()) ) )
+						( (father.getBirthday() != null && i.getBirthday().before(father.getBirthday())) || 
+					      (mother.getBirthday() != null && i.getBirthday().before(mother.getBirthday()) ) )
+					  )
 					{
 						return true;
 					}
@@ -273,17 +265,36 @@ public class GEDCOMValidator
 		return false;
 	}
 	
-	public static boolean isMarriedtoParent(Family f)
+	public static boolean isMarriedtoParent(TreeMap<String, Family> familyIndex,Individual i)
 	{
 		
-		if(f.getHusband() != null && f.getWife() != null && f.getChild() != null
-			&& (f.getHusband().getId().equals(f.getChild().getId()) 
-				|| f.getWife().getId().equals(f.getChild().getId())))
-			return true;
+		List<String> famlily = i.getSpouseOfFamilyIDs();
+		ArrayList<String> spouses = i.getAllSpousesIDs(familyIndex);
+		ArrayList<String> allchildren = new ArrayList<String>();
+		Iterator<String> f = famlily.iterator();
+		//Gather all children of an individual
+		while(f.hasNext())
+		{
+			String s = f.next();
+			if ( familyIndex.get(s) != null ) {
+				//System.out.println("id = " +familyIndex.get(s).getChild().getId());
+				Individual child = familyIndex.get(s).getChild();
+				if ( child != null ) {
+					//System.out.println("childerm = " +familyIndex.get(s).getChild());
+					allchildren.add(child.getId());
+				}
+			}
+		}
+		//For each spouse of the individual
+		for(String spouseID: spouses)
+		{
+			//System.out.println("spouses Id =" +spouseID );
+			//System.out.println("allchildren =" +allchildren);
+			//If the spouse is the child of an individual, return true.
+			if(allchildren.contains(spouseID))
+				return true;
+		}
 
 		return false;
-	}
-	
-
-	
+	}	
 }

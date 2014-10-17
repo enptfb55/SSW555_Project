@@ -383,20 +383,106 @@ public class GEDCOMValidatorTest {
 	@Test
 	public void testIsMarriedToParent(){
 		
-		Individual parent = new Individual("123");
-		Individual child = new Individual("234");
-		Family f = new Family("345");
-		
-		f.setWife(parent);
-		f.setHusband(child);
-		f.setChild(child);
-		
-		assertTrue(GEDCOMValidator.isMarriedtoParent(f));
-		
-		Individual parent2 = new Individual("456");
-		f.setHusband(parent2);
-		
-		assertFalse(GEDCOMValidator.isMarriedtoParent(f));
+		TreeMap<String, Family> familyIndex = new TreeMap<String, Family>();
+		TreeMap<String, Individual> personIndex = new TreeMap<String, Individual>();
+
+		Individual test1 = new Individual("5");
+		Individual test2 = new Individual("6");
+		Individual test3 = new Individual("7");
+		Individual test4 = new Individual("8");
+		Individual test5 = new Individual("9");
+		Family testf1 = new Family("1");
+		Family testf2 = new Family("2");
+		Family testf3 = new Family("3");
+
+		List<String> spouseOfFamilyIDs = new ArrayList<String>();
+		spouseOfFamilyIDs.add("1");
+		test1.setSpouseOfFamilyIDs(spouseOfFamilyIDs);
+
+		spouseOfFamilyIDs.add("2");
+		test1.setSpouseOfFamilyIDs(spouseOfFamilyIDs);
+
+		List<String> spouseOfFamilyIDs1 = new ArrayList<String>();
+		spouseOfFamilyIDs1.add("1");
+		test2.setSpouseOfFamilyIDs(spouseOfFamilyIDs1);
+
+		List<String> ChildOfFamilyIDs = new ArrayList<String>();
+		ChildOfFamilyIDs.add("1");
+		test3.setChildOfFamilyIDs(ChildOfFamilyIDs);
+
+		List<String> spouseOfFamilyIDs2 = new ArrayList<String>();
+		spouseOfFamilyIDs2.add("1");
+		test3.setSpouseOfFamilyIDs(spouseOfFamilyIDs2);
+
+		List<String> spouseOfFamilyIDs4 = new ArrayList<String>();
+		spouseOfFamilyIDs4.add("3");
+		test4.setSpouseOfFamilyIDs(spouseOfFamilyIDs4);
+
+		List<String> spouseOfFamilyIDs5 = new ArrayList<String>();
+		spouseOfFamilyIDs5.add("3");
+		test5.setSpouseOfFamilyIDs(spouseOfFamilyIDs5);
+
+		test1.setSex('M');
+		test2.setSex('F');
+		test3.setSex('F');
+		test4.setSex('M');
+		test5.setSex('F');
+		testf1.setHusband(test1);
+		testf1.setWife(test2);
+		testf2.setHusband(test1);
+		testf2.setWife(test3);
+		testf3.setHusband(test4);
+		testf3.setWife(test5);
+		testf1.setChild(test3);
+
+		personIndex.put(test1.getId(), test1);
+		personIndex.put(test2.getId(), test2);
+		personIndex.put(test3.getId(), test3);
+		personIndex.put(test4.getId(), test4);
+		personIndex.put(test5.getId(), test5);
+		familyIndex.put(testf1.getId(), testf1);
+		familyIndex.put(testf2.getId(), testf2);
+		familyIndex.put(testf3.getId(), testf3);
+
+		assertTrue(!GEDCOMValidator.isMarriedtoParent(familyIndex, test3)); // Daughter
+		// married
+		// to
+		// father.
+		// Should
+		// not
+		// be
+		// true
+		// because
+		// the
+		// function
+		// checks
+		// if
+		// the
+		// parent
+		// was
+		// married
+		// to
+		// their
+		// child,
+		// not
+		// the
+		// other
+		// way
+		// around.
+		assertTrue(GEDCOMValidator.isMarriedtoParent(familyIndex, test1)); // Father
+		// married
+		// to
+		// daughter.
+		assertTrue(!GEDCOMValidator.isMarriedtoParent(familyIndex, test4)); // Normal
+		assertTrue(!GEDCOMValidator.isMarriedtoParent(familyIndex, test2)); // step
+		// father
+		// married
+		// to
+		// step
+		// daughter
+		// -
+		// is
+		// allowed
 	}
 
 }
