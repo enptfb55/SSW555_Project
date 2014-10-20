@@ -1,19 +1,19 @@
 package main;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TreeMap;
 
 public class Individual
 {
-	public final static char SEX_MALE = 'M';
-	public final static char SEX_FEMALE = 'F';
-	
-	private String Id;
-	private String Name;
-	private char Sex;
-	private Date Birthday;
-	private Date Death;
+	private String id;
+	private String name;
+	private char sex;
+	private Date birthday;
+	private Date death;
 	private List<String> childOfFamilyIDs;
 	private List<String> spouseOfFamilyIDs;
 
@@ -33,70 +33,42 @@ public class Individual
 	
 	public String getId()
 	{
-		return Id;
+		return id;
 	}
 
-	public void setId(String id)
+	public void setId(String identifier)
 	{
-		Id = id;
-		
-		if(id.isEmpty())
-		{
-			throw new IllegalArgumentException("An individual must have an id");
-		}
+		id = identifier;
 	}
 	
 	public String getName()
 	{
-		return Name;
+		return name;
 	}
 	
-	public void setName(String name)
+	public void setName(String n)
 	{
-		Name = name.replace("/", "");
-		
-		if(name.isEmpty())
-		{
-			throw new IllegalArgumentException("An individual must have a name");
-		}
+		name = n.replace("/", "");
 	}	
 	
 	public Date getBirthday()
 	{
-		return Birthday;
+		return birthday;
 	}
 	
-	public void setBirthday(Date birthday) 
+	public void setBirthday(Date b) 
 	{
-		Birthday = birthday;
-		
-		if(this.getDeath() != null && birthday.after(this.getDeath()))
-		{
-			throw new IllegalArgumentException("Specified birth date of " 
-												+ new SimpleDateFormat("d MMM yyyy").format(birthday) 
-												+ " is after death date of " 
-												+ new SimpleDateFormat("d MMM yyyy").format(this.getDeath()) 
-												+ " for individual with id " + this.getId());
-		}
+		birthday = b;
 	}
 	
 	public Date getDeath()
 	{
-		return Death;
+		return death;
 	}
 	
-	public void setDeath(Date death)
+	public void setDeath(Date d)
 	{
-		Death = death;
-		
-		if(this.getBirthday() != null && death.before(this.getBirthday()))
-		{
-			throw new IllegalArgumentException("Specified death date of " 
-												+ new SimpleDateFormat("d MMM yyyy").format(death) 
-												+ " is before birth date of " 
-												+ new SimpleDateFormat("d MMM yyyy").format(this.getBirthday()) 
-												+ " for individual with id " + this.getId());
-		}
+		death = d;
 	}
 	
 	public List<String> getChildOfFamilyIDs()
@@ -120,7 +92,7 @@ public class Individual
 	}
 
 	public char getSex() {
-		return Sex;
+		return sex;
 	}
 	
 	public String toString()
@@ -135,16 +107,34 @@ public class Individual
 				+ "\n";
 	}
 
-	public void setSex(char sex)
+	public void setSex(char c)
 	{
-		Sex = sex;
-		
-		//should probably make these static finals or perhaps create a sex-like enum/class
-		if(sex != SEX_MALE && sex != SEX_FEMALE)
-		{ 
-			throw new IllegalArgumentException("The specified individual sex of " + sex + " is invalid -- " + SEX_MALE + " and " + SEX_FEMALE + " only.");
-		}
+		sex = c;
 	}
 	
+	public ArrayList<String> getAllSpousesIDs(TreeMap<String, Family> family)
+	{
+		ArrayList<String> spouses = new ArrayList<String>();
+		
+		Iterator<String> i = getSpouseOfFamilyIDs().iterator();
+	
+		while(i.hasNext())
+		{
+			String s = i.next();
+			if(family.containsKey(s))
+			{
+				if(family.get(s).getHusband()!=null && family.get(s).getWife()!=null) {
+		
+					
+				if(family.get(s).getHusband().getId().equals(id))
+					spouses.add(family.get(s).getWife().getId());
+				if(family.get(s).getWife().getId().equals(id))
+					spouses.add(family.get(s).getHusband().getId());
+				}
+			}			
+		}
+		
+		return spouses;
+	}
 	
 }

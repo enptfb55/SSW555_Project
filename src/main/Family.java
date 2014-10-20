@@ -1,107 +1,89 @@
 package main;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Family
 {
-	private String Id;
-	private Date Married;
-	private Date Divorced;
-	private Individual Husband;
-	private Individual Wife;
-	private Individual Child;
+	private String id;
+	private Date married;
+	private Date divorced;
+	private Individual husband;
+	private Individual wife;
+	private Individual child;
 
 	public Family(String identifier)
 	{
 		this.setId(identifier);
 	}
 	
-	public String getId() {
-		return Id;
+	public String getId()
+	{
+		return id;
 	}
 
-	public void setId(String id)
+	public void setId(String identifier)
 	{
-		Id = Individual.ParseIdFromString(id);
-		
-		if(id.isEmpty())
-		{
-			throw new IllegalArgumentException("A family must have an id");
-		}
+		id = Individual.ParseIdFromString(identifier);
 	}
 
 	public Date getMarried()
 	{
-		return Married;
+		return married;
 	}
 
-	public void setMarried(Date married)
+	public void setMarried(Date d)
 	{
-		Married = married;
+		married = d;
 	}
 
 	public Individual getHusband()
 	{
-		return Husband;
+		return husband;
 	}
 
-	public void setHusband(Individual husband)
+	public void setHusband(Individual i)
 	{
-		Husband = husband;
-		
-		if(husband.getSex() != Individual.SEX_MALE && husband.getSex() != '\u0000')
-		{
-			throw new IllegalArgumentException("Husband with id " + husband.getId() + " may only be of male sex type for family with id " + this.getId());
-		}
-		
-		VerifyMarriage (husband);
+		husband = i;
 	}
 
 	public Individual getWife()
 	{
-		return Wife;
+		return wife;
 	}
 
-	public void setWife(Individual wife)
+	public void setWife(Individual i)
 	{
-		Wife = wife;
-		
-		if(wife.getSex() != Individual.SEX_FEMALE && wife.getSex() != '\u0000')
-		{
-			throw new IllegalArgumentException("Wife with id " + wife.getId() + " may only be of female sex type for family with id " + this.getId());
-		}
-		
-		VerifyMarriage (wife);
-		
-	}
-	
-	private void VerifyMarriage (Individual spouse)
-	{
-		
-		if( spouse.getDeath() != null &&
-			Married != null &&
-			spouse.getDeath().before(Married)) //should perhaps thrown a different exception as to catch the exact error type instead of determine from message
-		{
-			throw new IllegalArgumentException("Spouse with id " + spouse.getId() + " is dead and may not be married in family with id " + this.getId());
-		}
+		wife = i;
 	}
 
 	public Individual getChild()
 	{
-		return Child;
+		return child;
 	}
 
-	public void setChild(Individual child) 
+	public void setChild(Individual i) 
 	{
-		Child = child;
+		child = i;
 	}
 
 	public Date getDivorced() 
 	{
-		return Divorced;
+		return divorced;
 	}
 
-	public void setDivorced(Date divorced) 
+	public void setDivorced(Date d) 
 	{
-		Divorced = divorced;
+		divorced = d;
+	}
+	
+	public String toString()
+	{
+		return "Id:\t\t" + this.getId()
+				+ "\nHusband Name:\t" + (this.getHusband() != null ? this.getHusband().getName() : "")
+				+ "\nWife Name:\t" + (this.getWife() != null ? this.getWife().getName() : "")
+				+ "\nChild Name:\t" + (this.getChild() != null ? this.getChild().getName() : "")
+				+ "\nMarried:\t" + (this.getMarried() == null ? "" : new SimpleDateFormat("d MMM yyyy").format(this.getMarried()))
+				+ "\nDivorced:\t" + (this.getDivorced() == null ? "" : new SimpleDateFormat("d MMM yyyy").format(this.getDivorced()))
+				+ "\n";
 	}
 }
