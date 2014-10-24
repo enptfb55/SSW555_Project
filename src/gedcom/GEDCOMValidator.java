@@ -1,7 +1,6 @@
 package gedcom;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -111,42 +110,7 @@ public class GEDCOMValidator
 		return false;
 	}
 	
-	public static boolean isMarriedMoreThanOnceAtATime(Individual i, Collection<Family> families)
-	{
-		int numValidMarriages = 0;
-		
-		if(i != null && families != null)
-		{
-//			switch(i.getSex())
-//			{
-//				case Sex.MALE:
-//					for (Family f : families)
-//					{
-//						//doesn't consider marriage/divorce dates and it should
-//						if(f.getHusband() != null && f.getWife() != null && f.getHusband().getId() == i.getId() && f.getDivorced() == null) 
-//							numValidMarriages++;
-//				    }
-//					break;
-//					
-//				case Sex.FEMALE:
-//					for (Family f : families)
-//					{
-//						//doesn't consider marriage/divorce dates and it should
-//						if(f.getHusband() != null && f.getWife() != null && f.getWife().getId() == i.getId() && f.getDivorced() != null) 
-//							numValidMarriages++;
-//				    }
-//					break;
-//		}
-			
-			if(numValidMarriages > 1)
-				return true;
-		}
-		
-		return false;
-	}
-	
-
-	public static boolean hasmorethanonespouse( TreeMap<String, Individual> i,
+	public static boolean hasMoreThanOneSpouse( TreeMap<String, Individual> i,
 											    TreeMap<String, Family> fam, 
 											    Individual indi ) 
 	{
@@ -205,7 +169,7 @@ public class GEDCOMValidator
 		return false;
 	}
 
-	public static boolean ChildBornBeforeParent(TreeMap<String, Individual> indi,TreeMap<String, Family> famI,Individual i)
+	public static boolean isChildBornBeforeParent(TreeMap<String, Individual> indi,TreeMap<String, Family> famI,Individual i)
 	{
 		Individual father;
 		Individual mother;
@@ -265,7 +229,7 @@ public class GEDCOMValidator
 		return false;
 	}
 	
-	public static boolean isMarriedtoParent(TreeMap<String, Family> familyIndex,Individual i)
+	public static boolean isMarriedtoParent(TreeMap<String, Family> familyIndex, Individual i)
 	{
 		
 		List<String> famlily = i.getSpouseOfFamilyIDs();
@@ -296,5 +260,22 @@ public class GEDCOMValidator
 		}
 
 		return false;
-	}	
+	}
+	
+	public static boolean hasMoreThanOneDeathDate(Individual i)
+	{
+		if(i.getNumDeathDates() > 1)
+			return true;
+		
+		return false;
+	}
+	
+	public static boolean isBirthdayInFuture(Individual i)
+	{
+		if(i.getBirthday() != null && i.getBirthday().after(new Date()))
+			return true;
+		
+		return false;
+	}
+	
 }

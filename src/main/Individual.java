@@ -16,6 +16,7 @@ public class Individual
 	private Date death;
 	private List<String> childOfFamilyIDs;
 	private List<String> spouseOfFamilyIDs;
+	private int numDeathDates;
 
 	public Individual(String identifier)
 	{
@@ -24,6 +25,7 @@ public class Individual
 		this.setDeath(null);
 		this.setChildOfFamilyIDs(new LinkedList<String>());
 		this.setSpouseOfFamilyIDs(new LinkedList<String>());
+		this.setNumDeathDates(0);
 	}
 	
 	public static String ParseIdFromString(String s)
@@ -65,17 +67,23 @@ public class Individual
 	{
 		return death;
 	}
-	
+
 	public void setDeath(Date d)
 	{
+		if(d != null)
+		{
+			if(this.getDeath() == null || !this.getDeath().equals(d))
+				this.setNumDeathDates(this.getNumDeathDates() + 1);
+		}
+		
 		death = d;
 	}
-	
+
 	public List<String> getChildOfFamilyIDs()
 	{
 		return childOfFamilyIDs;
 	}
-	
+
 	public void setChildOfFamilyIDs(List<String> childOfFamilyIDs)
 	{
 		this.childOfFamilyIDs = childOfFamilyIDs;
@@ -135,6 +143,14 @@ public class Individual
 		}
 		
 		return spouses;
+	}
+
+	public int getNumDeathDates() {
+		return numDeathDates;
+	}
+
+	public void setNumDeathDates(int numDeathDates) {
+		this.numDeathDates = numDeathDates;
 	}
 	
 }

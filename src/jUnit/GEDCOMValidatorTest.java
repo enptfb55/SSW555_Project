@@ -135,7 +135,8 @@ public class GEDCOMValidatorTest {
 	}
 
 	@Test
-	public final void testIsHusbandDeadAndMarried() {
+	public final void testIsHusbandDeadAndMarried()
+	{
 		boolean validationResult = false;
 		
 		try
@@ -294,7 +295,7 @@ public class GEDCOMValidatorTest {
 		
 			
 	//	assertTrue(fa.bornBeforeParents(personIndex,familyIndex,ind6));
-		assertTrue(!GEDCOMValidator.ChildBornBeforeParent(personIndex,familyIndex,ind3));
+		assertTrue(!GEDCOMValidator.isChildBornBeforeParent(personIndex,familyIndex,ind3));
 	}
 	
 	@Test
@@ -333,7 +334,7 @@ public class GEDCOMValidatorTest {
 		indTable.put(i2.getId(), i2);
 		indTable.put(i3.getId(), i3);
 		
-		assertTrue(GEDCOMValidator.hasmorethanonespouse(indTable, famTable, i1) );
+		assertTrue(GEDCOMValidator.hasMoreThanOneSpouse(indTable, famTable, i1) );
 	}
 	
 	
@@ -483,6 +484,94 @@ public class GEDCOMValidatorTest {
 		// -
 		// is
 		// allowed
+	}
+	
+	@Test
+	public final void testIsHusbandDeadAndMarried1()
+	{
+		boolean validationResult = false;
+		
+		try
+		{
+			Date d = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(FAMILY_DATE_MARRIED_STRING);
+			
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(d);
+			cal.add(Calendar.DATE, -20); //20 days before marriage date -- should probably check same-day marriage and death too
+			
+			Individual male = new Individual(INDIVIDUAL_ID);
+			male.setDeath(cal.getTime());
+			
+			Family f = new Family(FAMILY_ID);
+			f.setMarried(d);
+			f.setHusband(male);
+			
+			validationResult = GEDCOMValidator.isHusbandDeadAndMarried(f);
+		}
+		catch (ParseException e)
+		{
+			
+		}
+		
+		assertTrue(validationResult);
+	}
+	
+	@Test
+	public final void hasMoreThanOneDeathDate()
+	{
+		try
+		{
+			Individual i = new Individual(INDIVIDUAL_ID);
+			assertFalse(GEDCOMValidator.hasMoreThanOneDeathDate(i));
+
+			i.setDeath(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(INDIVIDUAL_DEATH_DATE));
+			assertFalse(GEDCOMValidator.hasMoreThanOneDeathDate(i));
+
+			i.setDeath(i.getDeath());
+			assertFalse(GEDCOMValidator.hasMoreThanOneDeathDate(i));
+
+			i.setDeath(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(FAMILY_DATE_MARRIED_STRING));
+			assertTrue(GEDCOMValidator.hasMoreThanOneDeathDate(i));
+
+			i.setDeath(i.getDeath());
+			assertTrue(GEDCOMValidator.hasMoreThanOneDeathDate(i));
+
+			Individual i2 = new Individual(INDIVIDUAL_ID);
+			
+			i2.setDeath(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(INDIVIDUAL_DEATH_DATE));
+			i2.setDeath(null);
+			assertFalse(GEDCOMValidator.hasMoreThanOneDeathDate(i2));
+			
+			i2.setDeath(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(FAMILY_DATE_MARRIED_STRING));
+			assertTrue(GEDCOMValidator.hasMoreThanOneDeathDate(i2));
+		}
+		catch (ParseException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public final void isBirthdayInFuture()
+	{
+		try
+		{
+			Individual i = new Individual(INDIVIDUAL_ID);
+
+			i.setBirthday(new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(INDIVIDUAL_BIRTHDAY_DATE));
+			assertFalse(GEDCOMValidator.isBirthdayInFuture(i));
+
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.DATE, +20); //20 days after now
+			
+			i.setBirthday(cal.getTime());
+			assertTrue(GEDCOMValidator.isBirthdayInFuture(i));
+		}
+		catch (ParseException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 }

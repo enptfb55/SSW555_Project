@@ -255,17 +255,12 @@ public class GEDCOMParser {
 				errors.add(new GEDCOMError("Individual " + i.getId() + " has a death date listed without a corresponding birthday"));
 			}
 			
-			if(GEDCOMValidator.isMarriedMoreThanOnceAtATime(i, families.values()))
-			{
-				errors.add(new GEDCOMError("Individual " + i.getId() + " was found invalidly married more than once"));
-			}
-			
-			if(GEDCOMValidator.hasmorethanonespouse(individuals,families,i))
+			if(GEDCOMValidator.hasMoreThanOneSpouse(individuals,families,i))
 			{	
 				errors.add(new GEDCOMError("Individual " + i.getId() + " was found invalidly married more than once"));
 			}
 			
-			if(GEDCOMValidator.ChildBornBeforeParent(individuals,families,i))
+			if(GEDCOMValidator.isChildBornBeforeParent(individuals,families,i))
 			{
 				errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be born before a parent"));
 			}
@@ -278,6 +273,16 @@ public class GEDCOMParser {
 			if(GEDCOMValidator.isMarriedtoParent(families,i))
 			{
 				errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be married to a parent"));
+			}
+			
+			if(GEDCOMValidator.hasMoreThanOneDeathDate(i))
+			{
+				errors.add(new GEDCOMError("Individual " + i.getId() + " was found to have more than one death date"));
+			}
+			
+			if(GEDCOMValidator.isBirthdayInFuture(i))
+			{
+				errors.add(new GEDCOMError("Individual " + i.getId() + " was found to have a birthday in the future "));
 			}
 		}
 		
