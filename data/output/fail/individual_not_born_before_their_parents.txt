@@ -29,6 +29,8 @@ Id:		F1
 Husband Name:	Bob
 Wife Name:	Jess
 Child Name:	Ted
+Married:	
+Divorced:	
 
 
 Issues detected - 
@@ -48,7 +50,6 @@ Issues detected -
 14. Specified tag name of GIVN is invalid
 15. Specified tag name of GIVN is invalid
 16. Specified tag name of GIVN is invalid
-17. Individual I3 was found to be born before a parent
-18. Individual I3 was found to be born before a parent
-19. Specified tag name of _CURRENT is invalid
-20. Specified tag name of 0 TRLR is invalid
+17. Specified tag name of _CURRENT is invalid
+18. Specified tag name of 0 TRLR is invalid
+19. Individual I3 was found to be born before a parent
