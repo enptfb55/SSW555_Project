@@ -574,4 +574,25 @@ public class GEDCOMValidatorTest {
 		}
 	}
 
+	@Test
+	public final void childishisOwnParent() {
+		
+		TreeMap<String, Family> familyIndex = new TreeMap<String, Family>();
+		Individual test1 = new Individual("1");
+		Individual test2 = new Individual("1");
+
+		Family testf1 = new Family("1");
+		
+		testf1.setHusband(test1);
+		testf1.setWife(test2);
+		testf1.setChild(test1);
+
+		List<String> ChildOfFamilyIDs = new ArrayList<String>();
+		ChildOfFamilyIDs.add("1");
+		test1.setChildOfFamilyIDs(ChildOfFamilyIDs);
+		
+		familyIndex.put(test1.getId(), testf1);
+		
+		assertTrue(GEDCOMValidator.childishisOwnParent(test1,familyIndex));
+	}
 }

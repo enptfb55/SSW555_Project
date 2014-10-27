@@ -284,6 +284,11 @@ public class GEDCOMParser {
 			{
 				errors.add(new GEDCOMError("Individual " + i.getId() + " was found to have a birthday in the future "));
 			}
+			
+			if(GEDCOMValidator.childishisOwnParent(i,families))
+			{
+				errors.add(new GEDCOMError("Individual " + i.getId() + " is listed as their own parent "));
+			}
 		}
 		
 		for (Map.Entry<String, Family> entry : families.entrySet())
