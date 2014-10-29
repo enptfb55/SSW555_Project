@@ -171,17 +171,12 @@ public class GEDCOMValidator {
 
 		if (famID.hasNext()) {
 			fam = famID.next();
-			// System.out.println("fam = " +fam);
+			
 			if (famI.get(fam) != null) {
 				father = famI.get(fam).getHusband();
 				mother = famI.get(fam).getWife();
 				if (father != null && mother != null) {
-					// System.out.println("father baday = " +
-					// father.getBirthday());
-
-					// System.out.println("Son's birthday = " +
-					// i.getBirthday());
-
+					
 					if (i.getBirthday() != null
 							&& ((father.getBirthday() != null && i
 									.getBirthday().before(father.getBirthday())) || (mother
@@ -192,6 +187,44 @@ public class GEDCOMValidator {
 				}
 			}
 		}
+		return false;
+	}
+	
+	public static boolean isBornAfterParentsDeath (
+			TreeMap<String, Individual> indi, TreeMap<String, Family> famI,
+			Individual i)
+	{
+		Individual father;
+		Individual mother;
+		String fam;
+
+		List<String> famC = i.getChildOfFamilyIDs();
+		Iterator<String> famID = famC.iterator();
+
+		if (famID.hasNext()) {
+			fam = famID.next();
+			
+			if (famI.get(fam) != null) 
+			{
+				
+				father = famI.get(fam).getHusband();
+				mother = famI.get(fam).getWife();
+				
+				if (father != null && mother != null) 
+				{
+					
+					if (i.getBirthday() != null && 
+						((father.getDeath() != null && 
+						  i.getBirthday().after(father.getDeath())) &&
+						 (mother.getDeath() != null && 
+						  i.getBirthday().after(mother.getDeath())))) 
+					{
+						return true;
+					}
+				}
+			}
+		}
+		
 		return false;
 	}
 
