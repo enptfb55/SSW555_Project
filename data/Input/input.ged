@@ -184,26 +184,47 @@
 1 FAMC @F50@
 1 FAMS @F51@
 0 @I61@ INDI
-1 NAME Bob
-2 GIVN Bob
+1 NAME Father Born After Child
+2 GIVN Father Born After Child
 1 SEX M
 1 BIRT
 2 DATE 4 APR 1990
 1 FAMS @F61@
 0 @I62@ INDI
-1 NAME Jess
-2 GIVN Jess
+1 NAME Mother Born After Child
+2 GIVN Mother Born After Child
 1 SEX F
 1 BIRT
 2 DATE 4 MAY 1990
 1 FAMS @F61@
 0 @I63@ INDI
-1 NAME Ted
-2 GIVN Ted
+1 NAME Born Before Parent
+2 GIVN Born Before Parent
 1 SEX M
 1 BIRT
 2 DATE 4 FEB 1990
 1 FAMC @F61@
+0 @I64@ INDI
+1 NAME Father Deceased Before Child Born
+2 GIVN Father Deceased Before Child Born
+1 SEX M
+1 DEAT
+2 DATE 4 APR 1990
+1 FAMS @F62@
+0 @I65@ INDI
+1 NAME Mother Deceased Before Child Born
+2 GIVN Mother Deceased Before Child Born
+1 SEX F
+1 DEAT
+2 DATE 4 MAY 1990
+1 FAMS @F62@
+0 @I66@ INDI
+1 NAME Born After Parents Deceased
+2 GIVN Born After Parents Deceased
+1 SEX M
+1 BIRT
+2 DATE 4 JUN 1990
+1 FAMC @F62@
 0 @I71@ INDI
 1 NAME Mita /Badheka/
 2 GIVN Mita
@@ -311,6 +332,10 @@
 1 HUSB @I61@
 1 WIFE @I62@
 1 CHIL @I63@
+0 @F62@ FAM
+1 HUSB @I64@
+1 WIFE @I65@
+1 CHIL @I66@
 1 _CURRENT Y
 0 @F50@ FAM
 1 HUSB @50@
