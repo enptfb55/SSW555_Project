@@ -329,6 +329,11 @@ public class GEDCOMParser {
 			{
 				errors.add(new GEDCOMError("Family " + f.getId() + " has a date of divorce listed without a corresponding day of marriage"));
 			}
+			
+			if(GEDCOMValidator.isMarriagedateInFuture(f))
+			{
+				errors.add(new GEDCOMError("Individual " +f.getId()  + " has marriage date in future "));
+			}
 		}
 	}
 	

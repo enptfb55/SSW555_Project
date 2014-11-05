@@ -324,5 +324,15 @@ public class GEDCOMValidator {
 		}
 		return false;
 	}
+	
+
+	public static boolean isMarriagedateInFuture(Family family) {
+		;
+		if(family.getMarried()!= null)
+			if(family.getMarried().after(new Date()))
+				return true;
+		
+		return false;
+	}
 
 }

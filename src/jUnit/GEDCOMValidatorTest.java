@@ -672,4 +672,27 @@ public class GEDCOMValidatorTest {
 		
 		assertTrue(GEDCOMValidator.childishisOwnParent(test1,familyIndex));
 	}
+	
+	@Test
+	public void testMarriedDateFuture()
+	{
+		TreeMap<String, Family> familyIndex = new TreeMap<String, Family>();
+	
+		Family f1 = new Family("1");
+		f1.setMarried(new Date(2015, 4, 15));
+		
+		Family f2 = new Family("4");
+		f2.setMarried(new Date(1994, 6, 4));
+		
+		
+		
+		familyIndex.put(f1.getId(), f1);
+		familyIndex.put(f2.getId(), f2);
+	
+		
+	
+		assertTrue(GEDCOMValidator.isMarriagedateInFuture(f1));
+		assertTrue(GEDCOMValidator.isMarriagedateInFuture(f2));
+		
+	}
 }
