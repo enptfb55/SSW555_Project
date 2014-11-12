@@ -695,4 +695,38 @@ public class GEDCOMValidatorTest {
 		assertTrue(GEDCOMValidator.isMarriagedateInFuture(f2));
 		
 	}
+	
+	@Test
+	public void isMarriedLongerThan120Years()
+	{
+		try
+		{
+			Date d = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(FAMILY_DATE_MARRIED_STRING);
+			
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(d);
+			cal.add(Calendar.DATE, (int) (119*365.25));
+
+			Family f = new Family(FAMILY_ID);
+			
+			f.setMarried(d);
+			f.setDivorced(cal.getTime());
+			assertFalse(GEDCOMValidator.isMarriedLongerThan120Years(f));
+			
+			cal.setTime(d);
+			cal.add(Calendar.DATE, (int) (120*365.25));
+			f.setDivorced(cal.getTime());
+			assertFalse(GEDCOMValidator.isMarriedLongerThan120Years(f));
+			
+			cal.setTime(d);
+			cal.add(Calendar.DATE, (int) (121*365.25));
+			f.setDivorced(cal.getTime());
+			assertTrue(GEDCOMValidator.isMarriedLongerThan120Years(f));
+		}
+		catch (ParseException e)
+		{
+			
+		}
+		
+	}
 }

@@ -332,7 +332,12 @@ public class GEDCOMParser {
 			
 			if(GEDCOMValidator.isMarriagedateInFuture(f))
 			{
-				errors.add(new GEDCOMError("Individual " +f.getId()  + " has marriage date in future "));
+				errors.add(new GEDCOMError("Family " +f.getId()  + " has marriage date in future"));
+			}
+			
+			if(GEDCOMValidator.isMarriedLongerThan120Years(f))
+			{
+				errors.add(new GEDCOMError("Family " +f.getId()  + " has been married for longer than 120 years"));
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 package gedcom;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -327,11 +328,43 @@ public class GEDCOMValidator {
 	
 
 	public static boolean isMarriagedateInFuture(Family family) {
-		;
 		if(family.getMarried()!= null)
 			if(family.getMarried().after(new Date()))
 				return true;
 		
+		return false;
+	}
+	
+	public static boolean isMarriedLongerThan120Years(Family f)
+	{
+		if(f.getMarried() != null && f.getDivorced() != null)
+		{
+			//http://stackoverflow.com/questions/1555262/calculating-the-difference-between-two-java-date-instances
+			long millisecondsPerDay = 60 * 60 * 24 * 1000;
+					
+			Calendar dateStartCal = Calendar.getInstance();
+			dateStartCal.setTime(f.getDivorced());
+			dateStartCal.set(Calendar.HOUR_OF_DAY, 0); // Crucial.
+			dateStartCal.set(Calendar.MINUTE, 0);
+			dateStartCal.set(Calendar.SECOND, 0);
+			dateStartCal.set(Calendar.MILLISECOND, 0);
+			
+			Calendar dateEndCal = Calendar.getInstance();
+			dateEndCal.setTime(f.getMarried());
+			dateEndCal.set(Calendar.HOUR_OF_DAY, 0); // Crucial.
+			dateEndCal.set(Calendar.MINUTE, 0);
+			dateEndCal.set(Calendar.SECOND, 0);
+			dateEndCal.set(Calendar.MILLISECOND, 0);
+			final long dateDifferenceInDays = ( dateStartCal.getTimeInMillis()
+			                                  - dateEndCal.getTimeInMillis()
+			                                  ) / millisecondsPerDay;
+
+			//leap years might have issue, 120 years * 365.25 days a year
+			if (dateDifferenceInDays > (120*365.25)) {
+			    return true;
+			}
+		}
+
 		return false;
 	}
 
