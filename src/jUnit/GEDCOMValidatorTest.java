@@ -652,11 +652,11 @@ public class GEDCOMValidatorTest {
 	}
 
 	@Test
-	public final void childishisOwnParent() {
+	public final void childIsHisOwnParent() {
 		
 		TreeMap<String, Family> familyIndex = new TreeMap<String, Family>();
 		Individual test1 = new Individual("1");
-		Individual test2 = new Individual("1");
+		Individual test2 = new Individual("2");
 
 		Family testf1 = new Family("1");
 		
@@ -670,7 +670,30 @@ public class GEDCOMValidatorTest {
 		
 		familyIndex.put(test1.getId(), testf1);
 		
-		assertTrue(GEDCOMValidator.childishisOwnParent(test1,familyIndex));
+		assertTrue(GEDCOMValidator.childIsHisOwnParent(test1,familyIndex));
+	}
+	
+	@Test
+	public final void testIsBornOutOfWedlock() {
+		
+		TreeMap<String, Family> familyIndex = new TreeMap<String, Family>();
+		Individual father = new Individual("1");
+		Individual mother = new Individual("2");
+		Individual child = new Individual("2");
+
+		Family testf1 = new Family("1");
+		
+		testf1.setHusband(father);
+		testf1.setWife(mother);
+		testf1.setChild(child);
+
+		List<String> ChildOfFamilyIDs = new ArrayList<String>();
+		ChildOfFamilyIDs.add("1");
+		child.setChildOfFamilyIDs(ChildOfFamilyIDs);
+		
+		familyIndex.put(father.getId(), testf1);
+		
+		assertTrue(GEDCOMValidator.isBornOutOfWedlock(child,familyIndex));
 	}
 	
 	@Test

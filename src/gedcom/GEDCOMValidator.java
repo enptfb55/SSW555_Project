@@ -113,11 +113,6 @@ public class GEDCOMValidator {
 				if (fam.get(s) != null && fam.get(t) != null) {
 
 					if (!fam.get(s).equals(fam.get(t))) {
-						// System.out.println(" s = " + fam.get(s));
-						// System.out.println(" t = " + fam.get(t));
-
-						Family s_test = fam.get(s);
-						Family t_test = fam.get(t);
 
 						Date spouseDeathDate = null;
 
@@ -301,7 +296,7 @@ public class GEDCOMValidator {
 		return false;
 	}
 
-	public static boolean childishisOwnParent(Individual i,
+	public static boolean childIsHisOwnParent(Individual i,
 			TreeMap<String, Family> familyIndex) {
 
 		// System.out.println("individual = " +i.getId());
@@ -323,6 +318,29 @@ public class GEDCOMValidator {
 
 			}
 		}
+		return false;
+	}
+	
+	public static boolean isBornOutOfWedlock( Individual i,
+											TreeMap<String, Family> familyIndex )
+	{
+		
+		List<String> family = i.getChildOfFamilyIDs();
+		Iterator<String> f = family.iterator();
+
+		while (f.hasNext()) 
+		{			
+			String s = f.next();
+			
+			if (familyIndex.get(s) != null) 
+			{			
+				if (familyIndex.get(s).getMarried() == null) 
+				{
+					return true;
+				}
+			}
+		}
+		
 		return false;
 	}
 	
