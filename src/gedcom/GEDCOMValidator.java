@@ -3,6 +3,7 @@ package gedcom;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
@@ -223,6 +224,37 @@ public class GEDCOMValidator {
 		
 		return false;
 	}
+	
+	public static boolean isMarriedBefore18 ( TreeMap<String, Individual> indi, 
+											  TreeMap<String, Family> famI,
+											  Individual i)
+	{
+		String fam;
+
+		List<String> famS = i.getSpouseOfFamilyIDs();
+		Iterator<String> famID = famS.iterator();
+
+		if (famID.hasNext()) {
+			fam = famID.next();
+			
+			if (famI.get(fam) != null) 
+			{
+				Date marriageDate = famI.get( fam ).getMarried();
+				if( null != marriageDate )
+				{					
+					if( null != i.getBirthday())
+					{
+						if( 18 > getYearsBetweenDates( i.getBirthday(), marriageDate ) )
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
 
 	public static boolean isMarriedToSibling(
 			TreeMap<String, Family> familyIndex,
@@ -322,7 +354,7 @@ public class GEDCOMValidator {
 	}
 	
 	public static boolean isBornOutOfWedlock( Individual i,
-											TreeMap<String, Family> familyIndex )
+											  TreeMap<String, Family> familyIndex )
 	{
 		
 		List<String> family = i.getChildOfFamilyIDs();
@@ -384,6 +416,19 @@ public class GEDCOMValidator {
 		}
 
 		return false;
+	}
+	
+	private static int getYearsBetweenDates( Date first, Date second)
+	{
+		Calendar firstCal = GregorianCalendar.getInstance();
+		Calendar secondCal = GregorianCalendar.getInstance();
+		
+		firstCal.setTime( first );
+		secondCal.setTime( first );
+		
+		secondCal.add(Calendar.DAY_OF_YEAR, -firstCal.get( Calendar.DAY_OF_YEAR ) );
+		
+		return secondCal.get( Calendar.YEAR ) - firstCal.get( Calendar.YEAR );
 	}
 
 }

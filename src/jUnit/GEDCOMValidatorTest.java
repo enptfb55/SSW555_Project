@@ -376,6 +376,36 @@ public class GEDCOMValidatorTest {
 	}
 	
 	@Test
+	public void testisMarriedBefore18() 
+	{
+		Individual i1 = new Individual("1");
+		Individual i2 = new Individual("2");
+		Family f1 = new Family("1");
+		
+		f1.setHusband( i1 );
+		f1.setWife( i2 );
+		
+		List<String> SpouseFamilyId = new 	ArrayList<String>();
+		SpouseFamilyId.add(f1.getId());
+		i1.setSpouseOfFamilyIDs( SpouseFamilyId );
+		i2.setSpouseOfFamilyIDs( SpouseFamilyId );
+		
+		f1.setMarried( new Date(2010, 1, 1) );
+		i1.setBirthday( new Date(1995, 1, 1) );
+		i2.setBirthday(new Date(1990, 1, 1) );
+		
+		TreeMap<String, Family> famTable = new TreeMap<String, Family>();
+		famTable.put(f1.getId(), f1);
+		
+		TreeMap<String, Individual> indTable = new TreeMap<String, Individual>();
+		indTable.put(i1.getId(), i1);
+		indTable.put(i2.getId(), i2);
+		
+		assertTrue( GEDCOMValidator.isMarriedBefore18( indTable, famTable, i1 ) );
+		
+	}
+	
+	@Test
 	public void testhasmorethanonespouse() {
 		Individual i1 = new Individual("1");
 		Individual i2 = new Individual("2");

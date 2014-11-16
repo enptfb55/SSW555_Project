@@ -269,6 +269,11 @@ public class GEDCOMParser {
 			{
 				errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be born after both parents were deceased"));
 			}
+			
+			if (GEDCOMValidator.isMarriedBefore18(individuals, families, i)) 
+			{
+				errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be married before they were 18"));
+			}			
 
 			if(GEDCOMValidator.isMarriedToSibling(families,individuals,i))
 			{
