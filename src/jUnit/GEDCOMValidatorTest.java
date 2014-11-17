@@ -376,6 +376,36 @@ public class GEDCOMValidatorTest {
 	}
 	
 	@Test
+	public void testisMarriedBefore18() 
+	{
+		Individual i1 = new Individual("1");
+		Individual i2 = new Individual("2");
+		Family f1 = new Family("1");
+		
+		f1.setHusband( i1 );
+		f1.setWife( i2 );
+		
+		List<String> SpouseFamilyId = new 	ArrayList<String>();
+		SpouseFamilyId.add(f1.getId());
+		i1.setSpouseOfFamilyIDs( SpouseFamilyId );
+		i2.setSpouseOfFamilyIDs( SpouseFamilyId );
+		
+		f1.setMarried( new Date(2010, 1, 1) );
+		i1.setBirthday( new Date(1995, 1, 1) );
+		i2.setBirthday(new Date(1990, 1, 1) );
+		
+		TreeMap<String, Family> famTable = new TreeMap<String, Family>();
+		famTable.put(f1.getId(), f1);
+		
+		TreeMap<String, Individual> indTable = new TreeMap<String, Individual>();
+		indTable.put(i1.getId(), i1);
+		indTable.put(i2.getId(), i2);
+		
+		assertTrue( GEDCOMValidator.isMarriedBefore18( indTable, famTable, i1 ) );
+		
+	}
+	
+	@Test
 	public void testhasmorethanonespouse() {
 		Individual i1 = new Individual("1");
 		Individual i2 = new Individual("2");
@@ -652,11 +682,11 @@ public class GEDCOMValidatorTest {
 	}
 
 	@Test
-	public final void childishisOwnParent() {
+	public final void childIsHisOwnParent() {
 		
 		TreeMap<String, Family> familyIndex = new TreeMap<String, Family>();
 		Individual test1 = new Individual("1");
-		Individual test2 = new Individual("1");
+		Individual test2 = new Individual("2");
 
 		Family testf1 = new Family("1");
 		
@@ -670,6 +700,86 @@ public class GEDCOMValidatorTest {
 		
 		familyIndex.put(test1.getId(), testf1);
 		
-		assertTrue(GEDCOMValidator.childishisOwnParent(test1,familyIndex));
+		assertTrue(GEDCOMValidator.childIsHisOwnParent(test1,familyIndex));
+	}
+	
+	@Test
+	public final void testIsBornOutOfWedlock() {
+		
+		TreeMap<String, Family> familyIndex = new TreeMap<String, Family>();
+		Individual father = new Individual("1");
+		Individual mother = new Individual("2");
+		Individual child = new Individual("2");
+
+		Family testf1 = new Family("1");
+		
+		testf1.setHusband(father);
+		testf1.setWife(mother);
+		testf1.setChild(child);
+
+		List<String> ChildOfFamilyIDs = new ArrayList<String>();
+		ChildOfFamilyIDs.add("1");
+		child.setChildOfFamilyIDs(ChildOfFamilyIDs);
+		
+		familyIndex.put(father.getId(), testf1);
+		
+		assertTrue(GEDCOMValidator.isBornOutOfWedlock(child,familyIndex));
+	}
+	
+	@Test
+	public void testMarriedDateFuture()
+	{
+		TreeMap<String, Family> familyIndex = new TreeMap<String, Family>();
+	
+		Family f1 = new Family("1");
+		f1.setMarried(new Date(2015, 4, 15));
+		
+		Family f2 = new Family("4");
+		f2.setMarried(new Date(1994, 6, 4));
+		
+		
+		
+		familyIndex.put(f1.getId(), f1);
+		familyIndex.put(f2.getId(), f2);
+	
+		
+	
+		assertTrue(GEDCOMValidator.isMarriagedateInFuture(f1));
+		assertTrue(GEDCOMValidator.isMarriagedateInFuture(f2));
+		
+	}
+	
+	@Test
+	public void isMarriedLongerThan120Years()
+	{
+		try
+		{
+			Date d = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(FAMILY_DATE_MARRIED_STRING);
+			
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(d);
+			cal.add(Calendar.DATE, (int) (119*365.25));
+
+			Family f = new Family(FAMILY_ID);
+			
+			f.setMarried(d);
+			f.setDivorced(cal.getTime());
+			assertFalse(GEDCOMValidator.isMarriedLongerThan120Years(f));
+			
+			cal.setTime(d);
+			cal.add(Calendar.DATE, (int) (120*365.25));
+			f.setDivorced(cal.getTime());
+			assertFalse(GEDCOMValidator.isMarriedLongerThan120Years(f));
+			
+			cal.setTime(d);
+			cal.add(Calendar.DATE, (int) (121*365.25));
+			f.setDivorced(cal.getTime());
+			assertTrue(GEDCOMValidator.isMarriedLongerThan120Years(f));
+		}
+		catch (ParseException e)
+		{
+			
+		}
+		
 	}
 }

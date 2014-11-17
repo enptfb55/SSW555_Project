@@ -1,7 +1,9 @@
 package gedcom;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
@@ -112,11 +114,6 @@ public class GEDCOMValidator {
 				if (fam.get(s) != null && fam.get(t) != null) {
 
 					if (!fam.get(s).equals(fam.get(t))) {
-						// System.out.println(" s = " + fam.get(s));
-						// System.out.println(" t = " + fam.get(t));
-
-						Family s_test = fam.get(s);
-						Family t_test = fam.get(t);
 
 						Date spouseDeathDate = null;
 
@@ -227,6 +224,37 @@ public class GEDCOMValidator {
 		
 		return false;
 	}
+	
+	public static boolean isMarriedBefore18 ( TreeMap<String, Individual> indi, 
+											  TreeMap<String, Family> famI,
+											  Individual i)
+	{
+		String fam;
+
+		List<String> famS = i.getSpouseOfFamilyIDs();
+		Iterator<String> famID = famS.iterator();
+
+		if (famID.hasNext()) {
+			fam = famID.next();
+			
+			if (famI.get(fam) != null) 
+			{
+				Date marriageDate = famI.get( fam ).getMarried();
+				if( null != marriageDate )
+				{					
+					if( null != i.getBirthday())
+					{
+						if( 18 > getYearsBetweenDates( i.getBirthday(), marriageDate ) )
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
 
 	public static boolean isMarriedToSibling(
 			TreeMap<String, Family> familyIndex,
@@ -300,7 +328,7 @@ public class GEDCOMValidator {
 		return false;
 	}
 
-	public static boolean childishisOwnParent(Individual i,
+	public static boolean childIsHisOwnParent(Individual i,
 			TreeMap<String, Family> familyIndex) {
 
 		// System.out.println("individual = " +i.getId());
@@ -323,6 +351,84 @@ public class GEDCOMValidator {
 			}
 		}
 		return false;
+	}
+	
+	public static boolean isBornOutOfWedlock( Individual i,
+											  TreeMap<String, Family> familyIndex )
+	{
+		
+		List<String> family = i.getChildOfFamilyIDs();
+		Iterator<String> f = family.iterator();
+
+		while (f.hasNext()) 
+		{			
+			String s = f.next();
+			
+			if (familyIndex.get(s) != null) 
+			{			
+				if (familyIndex.get(s).getMarried() == null) 
+				{
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+
+	public static boolean isMarriagedateInFuture(Family family) {
+		if(family.getMarried()!= null)
+			if(family.getMarried().after(new Date()))
+				return true;
+		
+		return false;
+	}
+	
+	public static boolean isMarriedLongerThan120Years(Family f)
+	{
+		if(f.getMarried() != null && f.getDivorced() != null)
+		{
+			//http://stackoverflow.com/questions/1555262/calculating-the-difference-between-two-java-date-instances
+			long millisecondsPerDay = 60 * 60 * 24 * 1000;
+					
+			Calendar dateStartCal = Calendar.getInstance();
+			dateStartCal.setTime(f.getDivorced());
+			dateStartCal.set(Calendar.HOUR_OF_DAY, 0); // Crucial.
+			dateStartCal.set(Calendar.MINUTE, 0);
+			dateStartCal.set(Calendar.SECOND, 0);
+			dateStartCal.set(Calendar.MILLISECOND, 0);
+			
+			Calendar dateEndCal = Calendar.getInstance();
+			dateEndCal.setTime(f.getMarried());
+			dateEndCal.set(Calendar.HOUR_OF_DAY, 0); // Crucial.
+			dateEndCal.set(Calendar.MINUTE, 0);
+			dateEndCal.set(Calendar.SECOND, 0);
+			dateEndCal.set(Calendar.MILLISECOND, 0);
+			final long dateDifferenceInDays = ( dateStartCal.getTimeInMillis()
+			                                  - dateEndCal.getTimeInMillis()
+			                                  ) / millisecondsPerDay;
+
+			//leap years might have issue, 120 years * 365.25 days a year
+			if (dateDifferenceInDays > (120*365.25)) {
+			    return true;
+			}
+		}
+
+		return false;
+	}
+	
+	private static int getYearsBetweenDates( Date first, Date second)
+	{
+		Calendar firstCal = GregorianCalendar.getInstance();
+		Calendar secondCal = GregorianCalendar.getInstance();
+		
+		firstCal.setTime( first );
+		secondCal.setTime( first );
+		
+		secondCal.add(Calendar.DAY_OF_YEAR, -firstCal.get( Calendar.DAY_OF_YEAR ) );
+		
+		return secondCal.get( Calendar.YEAR ) - firstCal.get( Calendar.YEAR );
 	}
 
 }

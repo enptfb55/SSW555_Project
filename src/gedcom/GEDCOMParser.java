@@ -269,6 +269,11 @@ public class GEDCOMParser {
 			{
 				errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be born after both parents were deceased"));
 			}
+			
+			if (GEDCOMValidator.isMarriedBefore18(individuals, families, i)) 
+			{
+				errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be married before they were 18"));
+			}			
 
 			if(GEDCOMValidator.isMarriedToSibling(families,individuals,i))
 			{
@@ -290,10 +295,16 @@ public class GEDCOMParser {
 				errors.add(new GEDCOMError("Individual " + i.getId() + " was found to have a birthday in the future "));
 			}
 			
-			if(GEDCOMValidator.childishisOwnParent(i,families))
+			if(GEDCOMValidator.childIsHisOwnParent(i,families))
 			{
 				errors.add(new GEDCOMError("Individual " + i.getId() + " is listed as their own parent "));
 			}
+			
+			if(GEDCOMValidator.isBornOutOfWedlock(i,families))
+			{
+				errors.add(new GEDCOMError("Individual " + i.getId() + " is born out of wedlock "));
+			}
+			
 		}
 		
 		for (Map.Entry<String, Family> entry : families.entrySet())
@@ -328,6 +339,16 @@ public class GEDCOMParser {
 			if(GEDCOMValidator.isDivorceListedWithoutDateOfMarriage(f))
 			{
 				errors.add(new GEDCOMError("Family " + f.getId() + " has a date of divorce listed without a corresponding day of marriage"));
+			}
+			
+			if(GEDCOMValidator.isMarriagedateInFuture(f))
+			{
+				errors.add(new GEDCOMError("Family " +f.getId()  + " has marriage date in future"));
+			}
+			
+			if(GEDCOMValidator.isMarriedLongerThan120Years(f))
+			{
+				errors.add(new GEDCOMError("Family " +f.getId()  + " has been married for longer than 120 years"));
 			}
 		}
 	}
