@@ -782,4 +782,40 @@ public class GEDCOMValidatorTest {
 		}
 		
 	}
+	
+	@Test
+	public void isOlderThanInYears()
+	{
+		try
+		{
+			Date d = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(FAMILY_DATE_MARRIED_STRING);
+			
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(d);
+			cal.add(Calendar.DATE, (int) (119*365.25));
+
+			Individual i = new Individual(INDIVIDUAL_ID);
+			
+			i.setBirthday(d);
+			i.setDeath(cal.getTime());
+			assertFalse(GEDCOMValidator.isOlderThanInYears(i, 120));
+			
+			cal.setTime(d);
+			cal.add(Calendar.DATE, (int) (120*365.25));
+			i.setDeath(cal.getTime());
+			assertFalse(GEDCOMValidator.isOlderThanInYears(i, 120));
+			
+			cal.setTime(d);
+			cal.add(Calendar.DATE, (int) (121*365.25));
+			i.setDeath(cal.getTime());
+			assertTrue(GEDCOMValidator.isOlderThanInYears(i, 120));
+		}
+		catch (ParseException e)
+		{
+			
+		}
+		
+	}
+	
+	
 }

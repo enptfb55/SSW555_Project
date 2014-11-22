@@ -389,46 +389,44 @@ public class GEDCOMValidator {
 	{
 		if(f.getMarried() != null && f.getDivorced() != null)
 		{
-			//http://stackoverflow.com/questions/1555262/calculating-the-difference-between-two-java-date-instances
-			long millisecondsPerDay = 60 * 60 * 24 * 1000;
-					
-			Calendar dateStartCal = Calendar.getInstance();
-			dateStartCal.setTime(f.getDivorced());
-			dateStartCal.set(Calendar.HOUR_OF_DAY, 0); // Crucial.
-			dateStartCal.set(Calendar.MINUTE, 0);
-			dateStartCal.set(Calendar.SECOND, 0);
-			dateStartCal.set(Calendar.MILLISECOND, 0);
-			
-			Calendar dateEndCal = Calendar.getInstance();
-			dateEndCal.setTime(f.getMarried());
-			dateEndCal.set(Calendar.HOUR_OF_DAY, 0); // Crucial.
-			dateEndCal.set(Calendar.MINUTE, 0);
-			dateEndCal.set(Calendar.SECOND, 0);
-			dateEndCal.set(Calendar.MILLISECOND, 0);
-			final long dateDifferenceInDays = ( dateStartCal.getTimeInMillis()
-			                                  - dateEndCal.getTimeInMillis()
-			                                  ) / millisecondsPerDay;
-
-			//leap years might have issue, 120 years * 365.25 days a year
-			if (dateDifferenceInDays > (120*365.25)) {
-			    return true;
-			}
+			return getYearsBetweenDates(f.getMarried(), f.getDivorced()) > 120;
 		}
 
 		return false;
 	}
 	
-	private static int getYearsBetweenDates( Date first, Date second)
+	private static double getYearsBetweenDates(Date first, Date second)
 	{
-		Calendar firstCal = GregorianCalendar.getInstance();
-		Calendar secondCal = GregorianCalendar.getInstance();
+		//http://stackoverflow.com/questions/1555262/calculating-the-difference-between-two-java-date-instances
+		long millisecondsPerDay = 60 * 60 * 24 * 1000;
+				
+		Calendar dateStartCal = Calendar.getInstance();
+		dateStartCal.setTime(first);
+		dateStartCal.set(Calendar.HOUR_OF_DAY, 0); // Crucial.
+		dateStartCal.set(Calendar.MINUTE, 0);
+		dateStartCal.set(Calendar.SECOND, 0);
+		dateStartCal.set(Calendar.MILLISECOND, 0);
 		
-		firstCal.setTime( first );
-		secondCal.setTime( first );
-		
-		secondCal.add(Calendar.DAY_OF_YEAR, -firstCal.get( Calendar.DAY_OF_YEAR ) );
-		
-		return secondCal.get( Calendar.YEAR ) - firstCal.get( Calendar.YEAR );
-	}
+		Calendar dateEndCal = Calendar.getInstance();
+		dateEndCal.setTime(second);
+		dateEndCal.set(Calendar.HOUR_OF_DAY, 0); // Crucial.
+		dateEndCal.set(Calendar.MINUTE, 0);
+		dateEndCal.set(Calendar.SECOND, 0);
+		dateEndCal.set(Calendar.MILLISECOND, 0);
+		final long dateDifferenceInDays = Math.abs( dateStartCal.getTimeInMillis()
+		                                  - dateEndCal.getTimeInMillis()
+		                                  ) / millisecondsPerDay;
 
+		//leap years might have issue, 120 years * 365.25 days a year
+		//should change the 365.25 to num days per year constant
+		return dateDifferenceInDays/365.25;
+	}
+	
+	public static boolean isOlderThanInYears(Individual i, int ageInYears) {
+
+		if (i.getBirthday() != null && i.getDeath() != null && GEDCOMValidator.getYearsBetweenDates(i.getBirthday(), i.getDeath()) > ageInYears)
+			return true;
+
+		return false;
+	}
 }

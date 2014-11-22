@@ -305,6 +305,10 @@ public class GEDCOMParser {
 				errors.add(new GEDCOMError("Individual " + i.getId() + " is born out of wedlock "));
 			}
 			
+			if(GEDCOMValidator.isOlderThanInYears(i, 120))
+			{
+				errors.add(new GEDCOMError("Individual " + i.getId() + " is found to be older than 120 years "));
+			}
 		}
 		
 		for (Map.Entry<String, Family> entry : families.entrySet())
