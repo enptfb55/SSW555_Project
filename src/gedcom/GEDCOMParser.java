@@ -309,6 +309,11 @@ public class GEDCOMParser {
 			{
 				errors.add(new GEDCOMError("Individual " + i.getId() + " is found to be older than 120 years "));
 			}
+			
+			if(GEDCOMValidator.isDivorcedbeforeMarriage(individuals,families,i))
+			{	
+				errors.add(new GEDCOMError("Individual " + i.getId() + " is divorced before marriage"));
+			}
 		}
 		
 		for (Map.Entry<String, Family> entry : families.entrySet())
@@ -353,6 +358,11 @@ public class GEDCOMParser {
 			if(GEDCOMValidator.isMarriedLongerThan120Years(f))
 			{
 				errors.add(new GEDCOMError("Family " +f.getId()  + " has been married for longer than 120 years"));
+			}
+			
+			if(GEDCOMValidator.isdivorcedInFuture(f))
+			{
+				errors.add(new GEDCOMError("Individual " + f.getId() + " had divorce date in future "));
 			}
 		}
 	}

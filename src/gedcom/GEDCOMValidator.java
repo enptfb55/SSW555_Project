@@ -429,4 +429,42 @@ public class GEDCOMValidator {
 
 		return false;
 	}
+	
+	public static boolean isdivorcedInFuture(Family family) {
+		if(family.getDivorced()!= null)
+			if(family.getDivorced().after(new Date()))
+				return true;
+		return false;
+	}
+	
+	public static boolean isDivorcedbeforeMarriage(TreeMap<String, Individual> i,
+			TreeMap<String, Family> fam, Individual indi) {
+
+		for (String s : indi.getSpouseOfFamilyIDs()) {
+			for (String t : indi.getSpouseOfFamilyIDs()) {
+
+ 				if (fam.get(s) != null && fam.get(t) != null) {
+
+					if (!fam.get(s).equals(fam.get(t))) {
+						Date md = fam.get(s).getMarried();
+						Date dd = fam.get(t).getDivorced();
+					//	System.out.println("md =" +md + "person = " +  fam.get(s).getId());
+					//	System.out.println("dd =" +dd + "person = " +  fam.get(s).getId());
+						if (dd != null) {
+							if (dd.before(md)) {
+									return true;
+							}
+
+						} 
+
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+
+
 }

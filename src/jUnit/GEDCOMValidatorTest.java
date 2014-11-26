@@ -817,5 +817,75 @@ public class GEDCOMValidatorTest {
 		
 	}
 	
+	@Test
+	public void testisDivorcedbeforeMarriage() {
+		Individual i1 = new Individual("1");
+		Individual i2 = new Individual("2");
+		Individual i3 = new Individual("3");
+		Family f1 = new Family("1");
+		Family f2 = new Family("2");
+		
+		TreeMap<String, Individual> indTable = new TreeMap<String, Individual>();
+		
+		f1.setHusband(i1);
+		f1.setWife(i2);
+		List<String> SpouseFamilyId = new 	ArrayList<String>();
+		
+		SpouseFamilyId.add(f1.getId());
+		i1.setSpouseOfFamilyIDs(SpouseFamilyId);
+		i2.setSpouseOfFamilyIDs(SpouseFamilyId);
+		
+		f1.setMarried(new Date(2002, 6, 5));
+		f1.setMarried(new Date(2012, 12, 12));
+		f1.setDivorced(new Date(2011,11,11));
+		
+		f2.setHusband(i1);
+		f2.setWife(i3);
+		SpouseFamilyId.add(f2.getId());
+		i1.setSpouseOfFamilyIDs(SpouseFamilyId);
+		i2.setSpouseOfFamilyIDs(SpouseFamilyId);
+		f2.setMarried(new Date(2012, 6, 5));
+		f2.setDivorced(new Date(2010, 10, 10));
+		
+		TreeMap<String, Family> famTable = new TreeMap<String, Family>();
+		famTable.put(f1.getId(), f1);
+		famTable.put(f2.getId(), f2);
+		
+		indTable.put(i1.getId(), i1);
+		indTable.put(i2.getId(), i2);
+		indTable.put(i3.getId(), i3);
+		
+		assertTrue(GEDCOMValidator.isDivorcedbeforeMarriage(indTable, famTable, i1) );
+	}
+	
+	@Test
+	public void testDivorcedDateFuture()
+	{
+		TreeMap<String, Family> familyIndex = new TreeMap<String, Family>();
+	
+		
+		
+		
+		Family f1 = new Family("2");
+		f1.setMarried(new Date(2011, 6, 21));
+		f1.setDivorced(new Date(2015, 12, 31));
+		
+		Family f2 = new Family("3");
+		f2.setMarried(new Date(2015, 8, 5));
+		f2.setDivorced(new Date(2016, 8, 10));
+		
+		
+		familyIndex.put(f1.getId(), f1);
+		familyIndex.put(f2.getId(), f2);
+	
+		
+	
+		
+	
+		assertTrue(GEDCOMValidator.isdivorcedInFuture(f1));
+		assertTrue(GEDCOMValidator.isdivorcedInFuture(f2));
+		
+	}
+	
 	
 }
