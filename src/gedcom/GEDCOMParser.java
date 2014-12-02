@@ -273,7 +273,12 @@ public class GEDCOMParser {
 			if (GEDCOMValidator.isMarriedBefore18(individuals, families, i)) 
 			{
 				errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be married before they were 18"));
-			}			
+			}	
+			
+			if (GEDCOMValidator.noSpouseForMarriage(individuals, families, i)) 
+			{
+				errors.add(new GEDCOMError("Individual " + i.getId() + " was found to be married with no spouse"));
+			}	
 
 			if(GEDCOMValidator.isMarriedToSibling(families,individuals,i))
 			{

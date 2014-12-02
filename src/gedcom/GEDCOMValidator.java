@@ -118,9 +118,12 @@ public class GEDCOMValidator {
 						Date spouseDeathDate = null;
 
 						if (fam.get(t).getHusband() == indi
-								&& fam.get(t).getWife() != null) {
+								&& fam.get(t).getWife() != null) 
+						{
 							spouseDeathDate = fam.get(t).getWife().getDeath();
-						} else if (fam.get(t).getHusband() != null) {
+						} 
+						else if (fam.get(t).getHusband() != null) 
+						{
 							spouseDeathDate = fam.get(t).getHusband()
 									.getDeath();
 						}
@@ -256,6 +259,36 @@ public class GEDCOMValidator {
 		return false;
 	}
 
+	public static boolean noSpouseForMarriage( TreeMap<String, Individual> indi,
+											   TreeMap<String, Family> famI, 
+											   Individual i) 
+	{
+		String fam;
+
+		List<String> famS = i.getSpouseOfFamilyIDs();
+		Iterator<String> famID = famS.iterator();
+
+		if (famID.hasNext()) {
+			fam = famID.next();
+
+			if (famI.get(fam) != null) {
+				if( null != famI.get(fam).getMarried() )
+				{
+					Individual indHusband = famI.get(fam).getHusband();
+					Individual indWife = famI.get(fam).getWife();
+					
+					if( ( null == indHusband ) ||
+					    ( null == indWife ) )
+					{
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+	
 	public static boolean isMarriedToSibling(
 			TreeMap<String, Family> familyIndex,
 			TreeMap<String, Individual> indIndex, Individual ind) {

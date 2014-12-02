@@ -406,6 +406,31 @@ public class GEDCOMValidatorTest {
 	}
 	
 	@Test
+	public void testNoSpouseForMarriage() 
+	{
+		Individual i1 = new Individual("1");
+		Family f1 = new Family("1");
+		
+		f1.setHusband( i1 );
+		
+		List<String> SpouseFamilyId = new 	ArrayList<String>();
+		SpouseFamilyId.add(f1.getId());
+		i1.setSpouseOfFamilyIDs( SpouseFamilyId );
+		
+		f1.setMarried( new Date(2010, 1, 1) );
+		i1.setBirthday( new Date(1995, 1, 1) );
+		
+		TreeMap<String, Family> famTable = new TreeMap<String, Family>();
+		famTable.put(f1.getId(), f1);
+		
+		TreeMap<String, Individual> indTable = new TreeMap<String, Individual>();
+		indTable.put(i1.getId(), i1);
+		
+		assertTrue( GEDCOMValidator.noSpouseForMarriage( indTable, famTable, i1 ) );
+		
+	}
+	
+	@Test
 	public void testhasmorethanonespouse() {
 		Individual i1 = new Individual("1");
 		Individual i2 = new Individual("2");
